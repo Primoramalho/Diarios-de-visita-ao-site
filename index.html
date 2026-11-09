@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diários de Visita ao Site - Metso</title>
+  
+  <!-- 1. Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 2. Configuração customizada do Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            metso: { 50:'#fdf2f2', 100:'#fbe1e1', 500:'#c8102e', 600:'#a80d26', 700:'#8a0a1f' },
+            ink: {
+              0:'#ffffff', 25:'#fbfbfc', 50:'#f6f7f9', 100:'#eef0f3', 150:'#e4e7ec',
+              200:'#d8dce3', 300:'#b9c0cb', 400:'#8f98a7', 500:'#6a7383', 600:'#4b5361',
+              700:'#363c47', 800:'#23272f', 900:'#14171c', 950:'#0a0c10'
+            }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            card: '0 1px 2px rgba(10,12,16,.04), 0 4px 12px rgba(10,12,16,.06)',
+            cardHover: '0 2px 4px rgba(10,12,16,.06), 0 12px 24px rgba(10,12,16,.08)',
+            sidebar: '4px 0 32px rgba(10,12,16,.18)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- 3. Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- 4. CSS Customizado -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-ink-100 min-h-screen text-ink-800 antialiased">
+
+  <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+  <div id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+  <aside id="sidebar">
+    <div class="bg-ink-950 text-white p-5 flex items-center justify-between shrink-0 border-b border-metso-500">
+      <div class="flex items-center gap-3">
+        <div class="flex flex-col leading-none">
+          <!-- LOGO NA SIDEBAR (Fundo Escuro) -->
+          <img src="img/metso-logo.png" alt="Metso" class="h-5 w-auto object-contain brightness-0 invert">
+          <span class="text-metso-500 text-[9px] font-bold uppercase tracking-[.2em] mt-1.5">Field Service</span>
+        </div>
+      </div>
+      <button onclick="toggleSidebar(false)" class="text-ink-400 hover:text-white hover:bg-white/10 p-2 rounded transition-colors">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="p-4 border-b border-ink-200 space-y-2 shrink-0 bg-white">
+      <button onclick="addDia(true)" class="btn-metso w-full flex items-center justify-center gap-2">
+        <i class="fa-solid fa-plus"></i><span>Adicionar Novo Dia</span>
+      </button>
+      <button onclick="irParaDiaEExcluir()" class="btn-metso-outline w-full flex items-center justify-center gap-2">
+        <i class="fa-solid fa-trash-can"></i><span>Excluir Dia Ativo</span>
+      </button>
+    </div>
+
+    <div class="px-4 py-3 bg-white border-b border-ink-200 shrink-0">
+      <div class="grid grid-cols-2 gap-2">
+        <div class="bg-ink-50 rounded p-3 border border-ink-200">
+          <div class="text-[9px] uppercase font-bold text-ink-500 tracking-widest">Diários</div>
+          <div id="sidebarTotalDias" class="text-xl font-black text-ink-900 leading-none mt-1">1</div>
+        </div>
+        <div class="bg-ink-50 rounded p-3 border border-ink-200">
+          <div class="text-[9px] uppercase font-bold text-ink-500 tracking-widest">Total horas</div>
+          <div id="sidebarTotalHoras" class="text-xl font-black text-ink-900 leading-none mt-1">0,00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-1.5" id="sidebarDiasList"></div>
+
+    <div class="p-4 border-t border-ink-200 text-[10px] text-ink-500 text-center shrink-0 bg-white uppercase tracking-widest">
+      Metso 2025/2026 © Diário de Visita
+    </div>
+  </aside>
+
+  <!-- ═══════════════════ CONTEÚDO ═══════════════════ -->
+  <div class="max-w-6xl mx-auto space-y-5 p-3 sm:p-6 md:p-8">
+
+    <!-- Barra Superior -->
+    <div class="no-print bg-white rounded-lg shadow-card border border-ink-200 overflow-hidden">
+      <div class="px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-3 border-b border-ink-200">
+        <div class="flex items-center gap-4">
+          <button onclick="toggleSidebar(true)" class="p-2 text-ink-700 hover:bg-ink-100 rounded transition-colors" title="Gerenciar Diários">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="flex flex-col leading-none">
+            <!-- LOGO NA BARRA SUPERIOR (Fundo Branco) -->
+            <img src="img/metso-logo.png" alt="Metso" class="h-6 w-auto object-contain">
+            <span class="text-metso-500 text-[8px] font-bold uppercase tracking-[.25em] mt-1">Field Service</span>
+          </div>
+          <div class="h-8 w-px bg-ink-200 hidden sm:block"></div>
+          <div class="hidden sm:block">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest">Diários de Visita</div>
+            <div class="text-sm font-bold text-ink-900 leading-tight">Registro de Campo</div>
+          </div>
+          <span id="badgeTotalDias" class="bg-ink-950 text-white text-[10px] px-2.5 py-1 uppercase font-bold tracking-wider">1 dia</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5">
+          <label class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 cursor-pointer border border-ink-200 uppercase tracking-wider" title="Carregar JSON">
+            <i class="fa-solid fa-folder-open"></i><span class="hidden sm:inline">Carregar</span>
+            <input type="file" id="jsonFileInput" accept=".json" onchange="importJSONState(event)" class="hidden">
+          </label>
+          <button onclick="exportJSONState()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Salvar JSON">
+            <i class="fa-solid fa-floppy-disk"></i><span class="hidden sm:inline">Salvar</span>
+          </button>
+          <button onclick="loadTemplateData()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Restaurar modelo">
+            <i class="fa-solid fa-rotate-left"></i><span class="hidden sm:inline">Reset</span>
+          </button>
+          <button onclick="clearAll()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Limpar tudo">
+            <i class="fa-solid fa-broom"></i><span class="hidden sm:inline">Limpar</span>
+          </button>
+          <button onclick="printAll()" class="btn-metso rounded shadow-sm flex items-center gap-1.5" title="Imprimir todos os diários">
+            <i class="fa-solid fa-print"></i><span>Imprimir</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero / Cabeçalho Compartilhado -->
+    <div class="bg-white rounded-lg shadow-card border border-ink-200 overflow-hidden">
+      <div class="metso-accent p-5 sm:p-7">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5 pb-5 border-b border-ink-200 mb-5">
+          <div>
+            <div class="text-[10px] uppercase font-bold text-metso-500 tracking-[.2em] mb-2">Diário de Visita</div>
+            <h1 class="metso-heading text-2xl sm:text-3xl text-ink-950 max-w-xl">
+              Registro Diário de Campo
+            </h1>
+            <p class="text-xs text-ink-500 font-medium mt-2 max-w-lg leading-relaxed">
+              Registro técnico de atividades em site — múltiplos dias, controle de horas, evidências e assinaturas.
+            </p>
+          </div>
+          <div class="flex flex-col items-start lg:items-end gap-2">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest">Work Order</div>
+            <div class="flex items-center gap-2 border-b-2 border-metso-500 pb-1">
+              <input type="text" id="inputWO" class="font-black text-metso-500 text-xl w-40 outline-none bg-transparent uppercase placeholder:text-ink-300" placeholder="WO-130576">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+          <div class="metso-accent pl-3">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest mb-1">Cliente</div>
+            <input type="text" id="inputCliente" class="field-input w-full px-2 py-1.5 font-semibold outline-none uppercase border-b border-ink-200 focus:border-ink-900 transition-colors bg-transparent" placeholder="Empresa / Unidade / Cidade">
+          </div>
+          <div class="metso-accent pl-3">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest mb-1">Equipamento</div>
+            <input type="text" id="inputEquipamento" class="field-input w-full px-2 py-1.5 font-bold outline-none uppercase border-b border-ink-200 focus:border-ink-900 transition-colors bg-transparent" placeholder="Nome do equipamento">
+          </div>
+          <div class="metso-accent pl-3">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest mb-1">Nº Série</div>
+            <input type="text" id="inputNoSerie" class="field-input w-full px-2 py-1.5 font-mono font-semibold outline-none uppercase border-b border-ink-200 focus:border-ink-900 transition-colors bg-transparent" placeholder="Número de série">
+          </div>
+          <div class="metso-accent pl-3">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest mb-1">Técnico</div>
+            <input type="text" id="inputTecnico" class="field-input w-full px-2 py-1.5 font-semibold outline-none border-b border-ink-200 focus:border-ink-900 transition-colors bg-transparent" placeholder="Nome do técnico">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Container dos dias (preenchido via JS) -->
+    <div id="diasContainer"></div>
+
+    <!-- Rodapé -->
+    <div class="bg-ink-950 text-white rounded-lg overflow-hidden">
+      <div class="p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="flex items-center gap-3">
+          <!-- LOGO NO RODAPÉ (Fundo Escuro) -->
+          <img src="img/metso-logo.png" alt="Metso" class="h-5 w-auto object-contain brightness-0 invert">
+          <span class="h-5 w-px bg-white/20"></span>
+          <span class="text-[11px] text-ink-400 uppercase tracking-widest">Field Service</span>
+        </div>
+        <div class="text-[11px] text-ink-400 text-center sm:text-right">
+          <div>Av. Independência, 2500 — Iporanga, Sorocaba — SP, 18087-101</div>
+          <div class="text-ink-300 font-semibold mt-1">Metso 2025/2026 © Todos os Direitos Reservados</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Visualização de Mídia -->
+  <div id="imageModal" class="fixed inset-0 bg-ink-950/90 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeModal()">
+    <div class="relative max-w-4xl max-h-[90vh] w-full flex flex-col items-center" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="absolute -top-11 right-0 text-white hover:text-ink-300 text-2xl font-bold p-2 transition-colors">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="modalContentContainer" class="w-full flex justify-center items-center"></div>
+      <p id="modalCaption" class="text-white text-xs sm:text-sm mt-3 font-medium bg-ink-900/90 px-4 py-1.5 rounded-full border border-ink-700"></p>
+    </div>
+  </div>
+
+  <!-- Toast de Notificação -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-ink-950 text-white px-4 py-3 rounded-lg shadow-2xl z-[80] transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 border border-ink-800">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-white"></i>
+    <span id="toastMessage" class="text-sm font-semibold">OK</span>
+  </div>
+
+  <!-- 5. Script Principal (Lógica do App) -->
+  <script src="app.js"></script>
+</body>
+</html>
