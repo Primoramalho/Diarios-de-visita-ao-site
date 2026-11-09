@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recomendações de Peças Sobressalentes - Metso</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            metso: { 50:'#fdf2f2', 100:'#fbe1e1', 500:'#c8102e', 600:'#a80d26', 700:'#8a0a1f' },
+            ink: {
+              0:'#ffffff', 25:'#fbfbfc', 50:'#f6f7f9', 100:'#eef0f3', 150:'#e4e7ec',
+              200:'#d8dce3', 300:'#b9c0cb', 400:'#8f98a7', 500:'#6a7383', 600:'#4b5361',
+              700:'#363c47', 800:'#23272f', 900:'#14171c', 950:'#0a0c10'
+            }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            card: '0 1px 2px rgba(10,12,16,.04), 0 4px 12px rgba(10,12,16,.06)',
+            cardHover: '0 2px 4px rgba(10,12,16,.06), 0 12px 24px rgba(10,12,16,.08)',
+            sidebar: '4px 0 32px rgba(10,12,16,.18)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    * { font-family: 'Inter', system-ui, sans-serif; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+    /* ═══════════════════════════════════════════════════════════
+       NAVBAR (não aparece na impressão)
+       ═══════════════════════════════════════════════════════════ */
+    .app-navbar {
+      background: #0a0c10;
+      padding: 8px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+      border-bottom: 3px solid #c8102e;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .app-navbar a {
+      color: #b9c0cb;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 4px 8px;
+      border-radius: 3px;
+      transition: all .15s ease;
+    }
+    .app-navbar a:hover {
+      color: #fff;
+      background: rgba(255,255,255,.08);
+    }
+    .app-navbar a.active {
+      color: #fff;
+      background: #c8102e;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       IMPRESSÃO — Quebra de página por registro
+       ═══════════════════════════════════════════════════════════ */
+    @media print {
+      @page { size: A4; margin: 10mm 10mm 5mm 10mm; }
+      html, body {
+        background: #fff !important; padding: 0 !important; margin: 0 !important;
+        color: #000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print { display: none !important; }
+      .shadow-card, .shadow-cardHover, .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm, .shadow-2xl, .shadow-sidebar { box-shadow: none !important; }
+
+      textarea, input, select {
+        border: none !important; background: transparent !important;
+        appearance: none !important; -webkit-appearance: none !important;
+      }
+
+      .print-only-text {
+        display: block !important;
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+        font-size: 12.5px !important;
+        line-height: 1.55 !important;
+        text-align: justify !important;
+      }
+      textarea.obs-textarea { display: none !important; }
+
+      #sidebar, #sidebarOverlay { display: none !important; }
+      .toolbar-no-print { display: none !important; }
+      .shared-header-screen { display: none !important; }
+
+      #registrosContainer {
+        display: block !important;
+      }
+
+      .registro-block {
+        break-before: page !important;
+        page-break-before: always !important;
+        display: block !important;
+        margin: 0 !important;
+        border: none !important;
+      }
+
+      #registrosContainer > .registro-block:first-child {
+        break-before: auto !important;
+        page-break-before: auto !important;
+      }
+
+      .registro-header, .registro-footer {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .gallery-grid > div {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .border-2, .overflow-hidden { overflow: visible !important; }
+
+      .card-head {
+        background: #0a0c10 !important; color: #fff !important;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+    }
+
+    .print-only-text { display: none; }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #b9c0cb; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #8f98a7; }
+
+    .reg-item { transition: all .15s ease; border-left: 3px solid transparent; }
+    .reg-item:hover:not(.active) { background: #f6f7f9; border-left-color: #b9c0cb; }
+    .reg-item.active { background: #f6f7f9; border-left-color: #c8102e; }
+
+    .field-input { transition: background .15s, border-color .15s; }
+    .field-input:focus { background: #f6f7f9; outline: none; }
+    input::placeholder, textarea::placeholder { color: #8f98a7; }
+
+    .btn-tool { transition: all .15s ease; white-space: nowrap; }
+    .btn-tool:hover { transform: translateY(-1px); }
+    .btn-tool:active { transform: translateY(0); }
+
+    .section-head { background: #14171c; letter-spacing: .08em; }
+
+    .btn-metso {
+      background: #14171c; color: #fff; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; font-size: 11px; padding: 10px 18px;
+      transition: background .15s ease; border: none;
+    }
+    .btn-metso:hover { background: #23272f; }
+    .btn-metso-red {
+      background: #c8102e; color: #fff; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; font-size: 11px; padding: 8px 14px;
+      transition: background .15s ease; border: none;
+    }
+    .btn-metso-red:hover { background: #a80d26; }
+    .btn-metso-outline {
+      background: transparent; color: #14171c; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; font-size: 11px; padding: 10px 18px;
+      transition: all .15s ease; border: 1px solid #14171c;
+    }
+    .btn-metso-outline:hover { background: #14171c; color: #fff; }
+
+    .metso-accent { position: relative; }
+    .metso-accent::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px; background: #c8102e;
+    }
+    .metso-heading { font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; line-height: 1.1; }
+
+    :focus-visible { outline: 2px solid #14171c; outline-offset: 2px; border-radius: 4px; }
+
+    .card-head { background: #0a0c10; }
+    
+    #sidebar {
+      position: fixed; top: 0; left: 0; height: 100vh; width: 360px;
+      background: #fff; z-index: 60; box-shadow: 4px 0 32px rgba(10,12,16,.18);
+      transform: translateX(-100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+      display: flex; flex-direction: column;
+    }
+    #sidebar.open { transform: translateX(0); }
+    #sidebarOverlay {
+      position: fixed; inset: 0; background: rgba(10,12,16,.6);
+      z-index: 55; opacity: 0; pointer-events: none; transition: opacity .2s;
+      backdrop-filter: blur(2px);
+    }
+    #sidebarOverlay.open { opacity: 1; pointer-events: auto; }
+
+    /* Estilo para edição inline da tabela */
+    .editable-cell input {
+      width: 100%;
+      background: transparent;
+      border: 1px solid #c8102e;
+      border-radius: 4px;
+      padding: 2px 4px;
+      font-size: 11px;
+      outline: none;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body class="bg-ink-100 min-h-screen text-ink-800 antialiased">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVBAR DE NAVEGAÇÃO ENTRE PÁGINAS
+       ═══════════════════════════════════════════════════════════ -->
+  <nav class="app-navbar no-print">
+    <a href="index.html">Capa</a>
+    <a href="1.0 Introdutção e objetivos REV03.html">Introdução</a>
+    <a href="2.0 Diário de visita REV03.html">Diário</a>
+    <a href="3.0 Observações registradas REV03.html">Observações</a>
+    <a href="4.0 Orientações recomendações feitas ao cliente REV03.html">Orientações</a>
+    <a href="5.0 recomendações de peças Sobressalentes.html" class="active">Peças</a>
+  </nav>
+
+  <!-- SIDEBAR -->
+  <div id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+  <aside id="sidebar">
+    <div class="bg-ink-950 text-white p-5 flex items-center justify-between shrink-0 border-b border-metso-500">
+      <div class="flex items-center gap-3">
+        <div class="flex flex-col leading-none">
+          <img src="img/metso-logo.png" alt="Metso" class="h-5 w-auto object-contain brightness-0 invert">
+          <span class="text-metso-500 text-[9px] font-bold uppercase tracking-[.2em] mt-1.5">Field Service</span>
+        </div>
+      </div>
+      <button onclick="toggleSidebar(false)" class="text-ink-400 hover:text-white hover:bg-white/10 p-2 rounded transition-colors">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="p-4 border-b border-ink-200 space-y-2 shrink-0 bg-white">
+      <button onclick="addRegistro(true)" class="btn-metso w-full flex items-center justify-center gap-2">
+        <i class="fa-solid fa-plus"></i><span>Adicionar Novo Registro</span>
+      </button>
+      <button onclick="irParaRegistroEExcluir()" class="btn-metso-outline w-full flex items-center justify-center gap-2">
+        <i class="fa-solid fa-trash-can"></i><span>Excluir Registro Ativo</span>
+      </button>
+    </div>
+
+    <div class="px-4 py-3 bg-white border-b border-ink-200 shrink-0">
+      <div class="grid grid-cols-2 gap-2">
+        <div class="bg-ink-50 rounded p-3 border border-ink-200">
+          <div class="text-[9px] uppercase font-bold text-ink-500 tracking-widest">Registros</div>
+          <div id="sidebarTotalRegistros" class="text-xl font-black text-ink-900 leading-none mt-1">1</div>
+        </div>
+        <div class="bg-ink-50 rounded p-3 border border-ink-200">
+          <div class="text-[9px] uppercase font-bold text-ink-500 tracking-widest">Anexos</div>
+          <div id="sidebarTotalEvid" class="text-xl font-black text-ink-900 leading-none mt-1">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-1.5" id="sidebarRegistrosList"></div>
+
+    <div class="p-4 border-t border-ink-200 text-[10px] text-ink-500 text-center shrink-0 bg-white uppercase tracking-widest">
+      Metso 2025/2026 © Peças Sobressalentes
+    </div>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="max-w-6xl mx-auto space-y-5 p-3 sm:p-6 md:p-8">
+
+    <!-- Barra Superior -->
+    <div class="toolbar-no-print no-print bg-white rounded-lg shadow-card border border-ink-200 overflow-hidden">
+      <div class="px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-4">
+          <button onclick="toggleSidebar(true)" class="p-2 text-ink-700 hover:bg-ink-100 rounded transition-colors" title="Gerenciar Registros">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="flex flex-col leading-none">
+            <img src="img/metso-logo.png" alt="Metso" class="h-6 w-auto object-contain">
+            <span class="text-metso-500 text-[8px] font-bold uppercase tracking-[.25em] mt-1">Field Service</span>
+          </div>
+          <div class="h-8 w-px bg-ink-200 hidden sm:block"></div>
+          <div class="hidden sm:block">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest">Recomendações</div>
+            <div class="text-sm font-bold text-ink-900 leading-tight">Peças Sobressalentes</div>
+          </div>
+          <span id="badgeTotalRegistros" class="bg-ink-950 text-white text-[10px] px-2.5 py-1 uppercase font-bold tracking-wider">1 registro</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5">
+          <label class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 cursor-pointer border border-ink-200 uppercase tracking-wider" title="Carregar JSON">
+            <i class="fa-solid fa-folder-open"></i><span class="hidden sm:inline">Carregar</span>
+            <input type="file" id="jsonFileInput" accept=".json" onchange="importJSONState(event)" class="hidden">
+          </label>
+          <button onclick="exportJSONState()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Salvar JSON">
+            <i class="fa-solid fa-floppy-disk"></i><span class="hidden sm:inline">Salvar</span>
+          </button>
+          <button onclick="loadTemplateData()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Restaurar modelo">
+            <i class="fa-solid fa-rotate-left"></i><span class="hidden sm:inline">Reset</span>
+          </button>
+          <button onclick="clearAll()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Limpar tudo">
+            <i class="fa-solid fa-broom"></i><span class="hidden sm:inline">Limpar</span>
+          </button>
+          <button onclick="printAll()" class="btn-metso rounded shadow-sm flex items-center gap-1.5" title="Imprimir todos os registros">
+            <i class="fa-solid fa-print"></i><span>Imprimir</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HEADER COMPARTILHADO -->
+    <div class="shared-header-screen bg-white rounded-lg shadow-card border border-ink-200 overflow-hidden">
+      <div class="metso-accent p-5 sm:p-7">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5 pb-5 border-b border-ink-200 mb-5">
+          <div>
+            <div class="text-[10px] uppercase font-bold text-metso-500 tracking-[.2em] mb-2">Recomendações de Peças Sobressalentes</div>
+            <h1 class="metso-heading text-2xl sm:text-3xl text-ink-950 max-w-xl">
+              RECOMENDAÇÕES DE PEÇAS SOBRESSALENTES
+            </h1>
+            <p class="text-xs text-ink-500 font-medium mt-2 max-w-lg leading-relaxed">
+              Documentação de Registro Técnico — Múltiplos registros com evidências.
+            </p>
+          </div>
+          <div class="flex flex-col items-start lg:items-end gap-2">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest">Work Order</div>
+            <div class="flex items-center gap-2 border-b-2 border-metso-500 pb-1">
+              <input type="text" id="inputWO" class="font-black text-metso-500 text-xl w-40 outline-none bg-transparent uppercase placeholder:text-ink-300" placeholder="WO-130576">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+          <div class="metso-accent pl-3">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest mb-1">Equipamento</div>
+            <input type="text" id="inputEquipamento" class="field-input w-full px-2 py-1.5 font-semibold outline-none uppercase border-b border-ink-200 focus:border-ink-900 transition-colors bg-transparent" placeholder="Nome do equipamento">
+          </div>
+          <div class="metso-accent pl-3">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest mb-1">Nº Série</div>
+            <input type="text" id="inputNoSerie" class="field-input w-full px-2 py-1.5 font-mono font-semibold outline-none uppercase border-b border-ink-200 focus:border-ink-900 transition-colors bg-transparent" placeholder="Número de série">
+          </div>
+          <div class="metso-accent pl-3 sm:col-span-2">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest mb-1">Elaborado por</div>
+            <input type="text" id="inputElaboradoPor" class="field-input w-full px-2 py-1.5 font-semibold outline-none border-b border-ink-200 focus:border-ink-900 transition-colors bg-transparent" placeholder="Nome do responsável">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTAINER DE REGISTROS -->
+    <div id="registrosContainer"></div>
+
+  </div>
+
+  <!-- Modal Visualizador -->
+  <div id="imageModal" class="no-print fixed inset-0 bg-ink-950/90 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeModal()">
+    <div class="relative max-w-4xl max-h-[90vh] w-full flex flex-col items-center" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="absolute -top-11 right-0 text-white hover:text-ink-300 text-2xl font-bold p-2 transition-colors">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="modalContentContainer" class="w-full flex justify-center items-center"></div>
+      <p id="modalCaption" class="text-white text-xs sm:text-sm mt-3 font-medium bg-ink-900/90 px-4 py-1.5 rounded-full border border-ink-700"></p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="no-print fixed bottom-5 right-5 bg-ink-950 text-white px-4 py-3 rounded-lg shadow-2xl z-[80] transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 border border-ink-800">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-white"></i>
+    <span id="toastMessage" class="text-sm font-semibold">OK</span>
+  </div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CHAVE DE PERSISTÊNCIA EXCLUSIVA DESTA PÁGINA
+   Antes compartilhava 'metso_observacoes_multi_v2' com
+   Observações (3.0) e Orientações (4.0). Agora usa
+   'metso_pecas_v3' e migra automaticamente APENAS os
+   registros que têm 'tabelaItens' (característica exclusiva
+   desta página) da chave legada.
+   ═══════════════════════════════════════════════════════════ */
+const STORAGE_KEY = 'metso_pecas_v3';
+const LEGACY_KEY  = 'metso_observacoes_multi_v2';
+
+function migrarDadosLegados() {
+  try {
+    if (localStorage.getItem(STORAGE_KEY)) return;
+    const antigo = localStorage.getItem(LEGACY_KEY);
+    if (!antigo) return;
+    const parsed = JSON.parse(antigo);
+    if (!Array.isArray(parsed.registros) || !parsed.registros.length) return;
+
+    // Filtra apenas os registros que têm tabelaItens (conteúdo real do 5.0)
+    const registrosPecas = parsed.registros.filter(r =>
+      r && Array.isArray(r.tabelaItens)
+    );
+
+    if (registrosPecas.length) {
+      const migrado = {
+        versao: 2,
+        header: parsed.header || {},
+        registros: registrosPecas,
+        registroAtivoId: registrosPecas[0].id,
+        exportedAt: parsed.exportedAt || new Date().toISOString()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrado));
+      console.log('[Metso] ' + registrosPecas.length + ' registro(s) de peças migrado(s) para', STORAGE_KEY);
+    }
+  } catch (e) {
+    console.warn('[Metso] Falha na migração de dados legados:', e);
+  }
+}
+migrarDadosLegados();
+
+let registros = [];
+let registroAtivoId = null;
+
+const defaultHeader = {
+  wo: "WO-130576",
+  equipamento: "BRITADOR CONICO HP4",
+  noSerie: "HP4SOR0137",
+  elaboradoPor: "Primo Silva"
+};
+
+const defaultRegistro = () => ({
+  id: gerarId(),
+  data: new Date().toISOString().split('T')[0],
+  titulo: "",
+  observacoes: "",
+  evidences: [],
+  tabelaItens: []
+});
+
+function gerarId() {
+  return 'reg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INICIALIZAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+window.onload = () => {
+  if (!carregarEstado()) {
+    aplicarHeader(defaultHeader);
+    const r = defaultRegistro();
+    r.titulo = "DIAGNOSTICO TECNICO DE CAMPO E AVALIACAO OPERACIONAL";
+    r.observacoes = `A tecnologia continua a transformar profundamente a maneira como nos comunicamos, trabalhamos e vivemos no dia a dia. A cada novo avanço, surgem ferramentas inovadoras que otimizam processos complexos, encurtam distâncias geográficas e facilitam o acesso a uma quantidade praticamente incalculável de informações em questão de segundos.
+
+Por outro lado, o contato com a natureza e o cultivo de momentos de pausa continuam sendo fundamentais para a nossa saúde mental e física. Caminhar ao ar livre, respirar ar puro e contemplar a beleza das paisagens naturais ajudam a desacelerar o ritmo frenético da rotina urbana.`;
+    registros = [r];
+    registroAtivoId = r.id;
+  }
+  renderTudo();
+};
+
+/* ═══════════════════════════════════════════════════════════
+   RENDERIZAÇÃO
+   ═══════════════════════════════════════════════════════════ */
+function renderTudo() {
+  renderPaineis();
+  atualizarBadge();
+  if (document.getElementById('sidebar').classList.contains('open')) {
+    renderSidebar();
+  }
+}
+
+function atualizarBadge() {
+  const b = document.getElementById('badgeTotalRegistros');
+  if (b) b.textContent = `${registros.length} ${registros.length === 1 ? 'registro' : 'registros'}`;
+}
+
+function renderPaineis() {
+  const cont = document.getElementById('registrosContainer');
+  cont.innerHTML = '';
+  
+  const r = registros.find(x => x.id === registroAtivoId);
+  if (r) {
+    const idx = registros.indexOf(r);
+    const panel = document.createElement('div');
+    panel.dataset.registroId = r.id;
+    panel.innerHTML = buildRegistroHTML(r, idx);
+    cont.appendChild(panel);
+    inicializarRegistro(r);
+  }
+}
+
+function renderTodosPaineis() {
+  const cont = document.getElementById('registrosContainer');
+  cont.innerHTML = '';
+  
+  registros.forEach((r, idx) => {
+    const panel = document.createElement('div');
+    panel.dataset.registroId = r.id;
+    panel.innerHTML = buildRegistroHTML(r, idx);
+    cont.appendChild(panel);
+    inicializarRegistro(r);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IMPRESSÃO
+   ═══════════════════════════════════════════════════════════ */
+function printAll() {
+  renderTodosPaineis();
+  window.print();
+  setTimeout(() => {
+    renderPaineis();
+  }, 500);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HTML DO REGISTRO
+   ═══════════════════════════════════════════════════════════ */
+function buildRegistroHTML(r, idx) {
+  return `
+  <div class="registro-block bg-white rounded-lg shadow-card border border-ink-200 overflow-hidden mb-5">
+
+    <div class="registro-header card-head text-white px-5 py-4 border-b-4 border-metso-500 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div class="flex items-center gap-4">
+        <img src="img/metso-logo.png" alt="Metso" class="h-5 w-auto object-contain brightness-0 invert">
+        <span class="h-8 w-px bg-white/20"></span>
+        <div>
+          <div class="text-[10px] text-metso-500 font-bold uppercase tracking-[.2em]">Recomendações de Peças Sobressalentes</div>
+          <h2 class="metso-heading text-sm sm:text-base text-white mt-0.5">Registro ${idx + 1}</h2>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 border border-white/10">
+          <span class="text-[9px] font-bold text-ink-400 uppercase tracking-widest">Data</span>
+          <input type="date" value="${r.data}" onchange="atualizarCampo('${r.id}','data',this.value)" class="font-semibold text-xs bg-transparent text-white outline-none [color-scheme:dark]">
+        </div>
+        <button onclick="excluirRegistro('${r.id}')" class="no-print text-[10px] font-bold text-white bg-white/5 hover:bg-metso-500 px-3 py-2 flex items-center gap-1.5 transition-colors border border-white/10" title="Excluir este registro">
+          <i class="fa-solid fa-trash-can"></i><span class="uppercase tracking-wider">Excluir</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="p-5 space-y-5">
+      <!-- SEÇÃO 1: TÍTULO -->
+      <div class="border border-ink-200 overflow-hidden">
+        <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center gap-2.5">
+          <span class="w-1 h-3 bg-metso-500"></span>
+          <span>Título</span>
+        </div>
+        <div class="p-3 bg-white">
+          <input type="text" value="${escapar(r.titulo)}" oninput="atualizarCampo('${r.id}','titulo',this.value)" class="w-full px-2 py-1.5 text-xs sm:text-sm font-semibold text-ink-800 border-b border-ink-200 outline-none focus:border-ink-900 uppercase bg-transparent transition-colors" placeholder="Digite o título do registro...">
+        </div>
+      </div>
+
+      <!-- SEÇÃO 2: DESCRIÇÃO -->
+      <div class="border border-ink-200 overflow-hidden">
+        <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center justify-between">
+          <span class="flex items-center gap-2.5">
+            <span class="w-1 h-3 bg-metso-500"></span>
+            <span>Descrição</span>
+          </span>
+          <span class="no-print text-[9px] font-medium text-ink-400 normal-case tracking-normal" data-stats="${r.id}">0 caracteres</span>
+        </div>
+        <div class="p-3 bg-white">
+          <textarea data-obs="${r.id}" rows="6" class="obs-textarea w-full p-3 text-xs sm:text-sm text-justify leading-relaxed border border-ink-200 rounded outline-none focus:border-ink-900 resize-none overflow-hidden print:hidden transition-all placeholder:text-ink-400" placeholder="Digite as observações técnicas detalhadas aqui...">${escapar(r.observacoes)}</textarea>
+          <div class="print-only-text p-1" data-print-obs="${r.id}">${escapar(r.observacoes)}</div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO 3: LISTA/MATERIAIS (TABELA) -->
+      <div class="border border-ink-200 overflow-hidden">
+        <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center justify-between">
+          <span class="flex items-center gap-2.5">
+            <span class="w-1 h-3 bg-metso-500"></span>
+            <span>Peças / Materiais</span>
+          </span>
+        </div>
+        
+        <div class="p-3 bg-white">
+          <!-- Controles para adicionar (Oculto na impressão) -->
+          <div class="no-print bg-ink-50 p-2.5 rounded border border-ink-200 flex flex-wrap items-center gap-2 mb-3">
+            <input type="number" id="addQtd_${r.id}" class="field-input w-16 px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white uppercase" placeholder="QTD" min="1">
+            <input type="text" id="addCod_${r.id}" class="field-input w-24 px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white uppercase" placeholder="CÓD.">
+            <input type="text" id="addDesc_${r.id}" class="field-input flex-grow min-w-[200px] px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white uppercase" placeholder="DESCRIÇÃO DA PEÇA / MATERIAL...">
+            <button type="button" onclick="adicionarItemTabela('${r.id}')" class="btn-metso-red rounded-sm py-1.5 px-3 flex items-center gap-1 shrink-0">
+              <i class="fa-solid fa-plus"></i> Incluir
+            </button>
+          </div>
+
+          <!-- Tabela -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs sm:text-sm text-left border-collapse">
+              <thead class="bg-ink-100 text-ink-800 uppercase text-[10px] tracking-wider border-b border-ink-300">
+                <tr>
+                  <th class="p-2 border-r border-ink-200 w-16 text-center font-bold">QTD</th>
+                  <th class="p-2 border-r border-ink-200 w-28 font-bold">CÓD.</th>
+                  <th class="p-2 font-bold">DESCRIÇÃO</th>
+                  <th class="p-2 w-20 text-center no-print border-l border-ink-200 font-bold">AÇÕES</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaBody_${r.id}" class="divide-y divide-ink-200 border-b border-ink-200 bg-white">
+                <!-- Linhas geradas via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO 4: ANEXOS -->
+      <div class="border border-ink-200 overflow-hidden">
+        <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center justify-between">
+          <span class="flex items-center gap-2.5">
+            <span class="w-1 h-3 bg-metso-500"></span>
+            <span>Anexos — Registro ${idx + 1}</span>
+          </span>
+          <label class="no-print btn-metso-red cursor-pointer flex items-center gap-1.5 rounded-sm">
+            <i class="fa-solid fa-plus"></i> Adicionar
+            <input type="file" multiple onchange="handleFileSelect(event, '${r.id}')" class="hidden">
+          </label>
+        </div>
+        <div class="p-4 bg-white min-h-[100px]">
+          <div data-empty="${r.id}" class="${r.evidences.length ? 'hidden' : ''} flex flex-col items-center justify-center py-8 text-ink-400 text-center border-2 border-dashed border-ink-200">
+            <i class="fa-solid fa-cloud-arrow-up text-4xl mb-2 text-ink-300"></i>
+            <p class="text-[11px] font-medium">Nenhum anexo neste registro.</p>
+            <p class="text-[10px] text-ink-400 mt-1">Clique em "Adicionar" para enviar fotos, vídeos ou PDFs.</p>
+          </div>
+          <div data-gallery="${r.id}" class="gallery-grid ${r.evidences.length ? 'grid' : 'hidden'} grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="registro-footer bg-ink-950 text-white px-5 py-3 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div class="flex items-center gap-2">
+        <img src="img/metso-logo.png" alt="Metso" class="h-5 w-auto object-contain brightness-0 invert pb-0.5">
+        <span class="text-white/40 mx-1">|</span>
+        <span class="text-ink-400 uppercase tracking-widest text-[8px]">Field Service</span>
+      </div>
+      <div class="text-right leading-tight text-ink-300 text-[10px]">
+        <div>Av. Independência, 2500 — Iporanga, Sorocaba — SP, 18087-101</div>
+        <div class="font-bold">Metso 2025/2026 © Todos os Direitos Reservados</div>
+      </div>
+    </div>
+
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LÓGICA DA TABELA (CRUD)
+   ═══════════════════════════════════════════════════════════ */
+function renderTabela(regId) {
+  const r = registros.find(x => x.id === regId);
+  if (!r) return;
+  const tbody = document.getElementById(`tabelaBody_${regId}`);
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+
+  if (!r.tabelaItens || r.tabelaItens.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-ink-400 italic text-[11px]">Nenhum item adicionado à tabela.</td></tr>`;
+    return;
+  }
+
+  r.tabelaItens.forEach((item, index) => {
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-ink-50 transition-colors';
+    
+    if (item.editando) {
+      tr.innerHTML = `
+        <td class="p-1 border-r border-ink-200 text-center editable-cell">
+          <input type="number" id="editQtd_${regId}_${index}" value="${item.qtd}" class="text-center" min="1">
+        </td>
+        <td class="p-1 border-r border-ink-200 editable-cell">
+          <input type="text" id="editCod_${regId}_${index}" value="${escapar(item.cod)}" class="uppercase">
+        </td>
+        <td class="p-1 editable-cell">
+          <input type="text" id="editDesc_${regId}_${index}" value="${escapar(item.desc)}" class="uppercase">
+        </td>
+        <td class="p-2 text-center no-print border-l border-ink-200 flex justify-center gap-1">
+          <button onclick="salvarEdicaoItem('${regId}', ${index})" class="p-1 text-green-600 hover:bg-green-50 rounded" title="Salvar"><i class="fa-solid fa-check"></i></button>
+          <button onclick="cancelarEdicaoItem('${regId}', ${index})" class="p-1 text-ink-500 hover:bg-ink-100 rounded" title="Cancelar"><i class="fa-solid fa-xmark"></i></button>
+        </td>
+      `;
+    } else {
+      tr.innerHTML = `
+        <td class="p-2 border-r border-ink-200 text-center font-semibold text-ink-900">${item.qtd}</td>
+        <td class="p-2 border-r border-ink-200 font-mono text-ink-700 uppercase">${escapar(item.cod)}</td>
+        <td class="p-2 text-ink-800 uppercase">${escapar(item.desc)}</td>
+        <td class="p-2 text-center no-print border-l border-ink-200 flex justify-center gap-1">
+          <button onclick="editarItemTabela('${regId}', ${index})" class="p-1.5 text-ink-400 hover:text-metso-500 hover:bg-metso-50 rounded transition-colors" title="Editar"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="removerItemTabela('${regId}', ${index})" class="p-1.5 text-ink-400 hover:text-metso-500 hover:bg-metso-50 rounded transition-colors" title="Remover"><i class="fa-solid fa-trash-can"></i></button>
+        </td>
+      `;
+    }
+    tbody.appendChild(tr);
+  });
+}
+
+function adicionarItemTabela(regId) {
+  const r = registros.find(x => x.id === regId);
+  if (!r) return;
+
+  const qtdInput = document.getElementById(`addQtd_${regId}`);
+  const codInput = document.getElementById(`addCod_${regId}`);
+  const descInput = document.getElementById(`addDesc_${regId}`);
+
+  const qtd = qtdInput.value.trim();
+  const cod = codInput.value.trim().toUpperCase();
+  const desc = descInput.value.trim().toUpperCase();
+
+  if (!qtd || !desc) {
+    showToast('Preencha pelo menos a Quantidade e a Descrição.', 'warning');
+    return;
+  }
+
+  if (!r.tabelaItens) r.tabelaItens = [];
+  r.tabelaItens.push({ qtd, cod, desc, editando: false });
+
+  qtdInput.value = '';
+  codInput.value = '';
+  descInput.value = '';
+
+  renderTabela(regId);
+  salvarEstado(false);
+  showToast('Item adicionado à tabela.');
+}
+
+function editarItemTabela(regId, index) {
+  const r = registros.find(x => x.id === regId);
+  if (!r || !r.tabelaItens[index]) return;
+  r.tabelaItens[index].editando = true;
+  renderTabela(regId);
+}
+
+function cancelarEdicaoItem(regId, index) {
+  const r = registros.find(x => x.id === regId);
+  if (!r || !r.tabelaItens[index]) return;
+  r.tabelaItens[index].editando = false;
+  renderTabela(regId);
+}
+
+function salvarEdicaoItem(regId, index) {
+  const r = registros.find(x => x.id === regId);
+  if (!r || !r.tabelaItens[index]) return;
+
+  const qtd = document.getElementById(`editQtd_${regId}_${index}`).value.trim();
+  const cod = document.getElementById(`editCod_${regId}_${index}`).value.trim().toUpperCase();
+  const desc = document.getElementById(`editDesc_${regId}_${index}`).value.trim().toUpperCase();
+
+  if (!qtd || !desc) {
+    showToast('Quantidade e Descrição são obrigatórias.', 'warning');
+    return;
+  }
+
+  r.tabelaItens[index] = { qtd, cod, desc, editando: false };
+  renderTabela(regId);
+  salvarEstado(false);
+  showToast('Item atualizado.');
+}
+
+function removerItemTabela(regId, index) {
+  const r = registros.find(x => x.id === regId);
+  if (!r || !r.tabelaItens) return;
+
+  if (!confirm('Remover este item da tabela?')) return;
+
+  r.tabelaItens.splice(index, 1);
+  renderTabela(regId);
+  salvarEstado(false);
+  showToast('Item removido da tabela.', 'info');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INICIALIZAÇÃO DO REGISTRO
+   ═══════════════════════════════════════════════════════════ */
+function inicializarRegistro(r) {
+  const ta = document.querySelector(`[data-obs="${r.id}"]`);
+  if (ta) {
+    autoResize(ta);
+    updateStats(r.id);
+    ta.addEventListener('input', () => {
+      autoResize(ta);
+      const print = document.querySelector(`[data-print-obs="${r.id}"]`);
+      if (print) print.textContent = ta.value;
+      updateStats(r.id);
+      atualizarCampo(r.id, 'observacoes', ta.value);
+    });
+  }
+  renderGalleryForRegistro(r.id);
+  renderTabela(r.id);
+}
+
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+function updateStats(regId) {
+  const ta = document.querySelector(`[data-obs="${regId}"]`);
+  const stats = document.querySelector(`[data-stats="${regId}"]`);
+  if (!ta || !stats) return;
+  const text = ta.value || '';
+  const chars = text.length;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  stats.textContent = `${chars} caracteres | ${words} palavras`;
+}
+
+function atualizarCampo(regId, campo, valor) {
+  const r = registros.find(x => x.id === regId);
+  if (!r) return;
+  r[campo] = valor;
+  salvarEstado(false);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════════════════════ */
+function toggleSidebar(open) {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  if (open) {
+    renderSidebar();
+    sb.classList.add('open');
+    ov.classList.add('open');
+  } else {
+    sb.classList.remove('open');
+    ov.classList.remove('open');
+  }
+}
+
+function renderSidebar() {
+  const list = document.getElementById('sidebarRegistrosList');
+  list.innerHTML = '';
+
+  document.getElementById('sidebarTotalRegistros').textContent = registros.length;
+  const totalEvid = registros.reduce((acc, r) => acc + r.evidences.length, 0);
+  document.getElementById('sidebarTotalEvid').textContent = totalEvid;
+
+  registros.forEach((r, idx) => {
+    const isAtivo = r.id === registroAtivoId;
+    const item = document.createElement('div');
+    item.className = `reg-item p-3 rounded border border-ink-200 cursor-pointer ${isAtivo ? 'active' : 'bg-white'}`;
+    item.innerHTML = `
+      <div class="flex items-start justify-between gap-2">
+        <div class="flex-grow min-w-0" onclick="selecionarRegistro('${r.id}')">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="bg-ink-950 text-white text-[10px] font-black px-2 py-0.5">${idx + 1}</span>
+            <span class="font-bold text-xs text-ink-900">${formatarData(r.data) || 'Sem data'}</span>
+            ${isAtivo ? '<span class="text-[9px] bg-metso-500 text-white px-1.5 py-0.5 font-bold uppercase tracking-wider">ATIVO</span>' : ''}
+          </div>
+          <div class="text-[11px] text-ink-700 mt-1.5 font-medium truncate" title="${escapar(r.titulo)}">${escapar(r.titulo) || '<em class="text-ink-400">Sem título</em>'}</div>
+          <div class="text-[10px] text-ink-500 mt-1 flex items-center gap-3 uppercase tracking-wide">
+            <span><i class="fa-regular fa-image mr-1"></i>${r.evidences.length} anexo(s)</span>
+            <span><i class="fa-regular fa-file-lines mr-1"></i>${(r.observacoes || '').length} car.</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-0.5 shrink-0">
+          <button onclick="event.stopPropagation(); moverRegistro('${r.id}', -1)" ${idx === 0 ? 'disabled' : ''} class="p-1 text-ink-400 hover:text-ink-900 hover:bg-ink-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors" title="Mover para cima">
+            <i class="fa-solid fa-chevron-up text-[10px]"></i>
+          </button>
+          <button onclick="event.stopPropagation(); moverRegistro('${r.id}', 1)" ${idx === registros.length - 1 ? 'disabled' : ''} class="p-1 text-ink-400 hover:text-ink-900 hover:bg-ink-100 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors" title="Mover para baixo">
+            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+          </button>
+          <button onclick="event.stopPropagation(); excluirRegistro('${r.id}')" class="p-1 text-ink-400 hover:text-metso-500 hover:bg-metso-50 rounded transition-colors" title="Excluir registro">
+            <i class="fa-solid fa-trash-can text-[10px]"></i>
+          </button>
+        </div>
+      </div>`;
+    list.appendChild(item);
+  });
+}
+
+function selecionarRegistro(id) {
+  if (registroAtivoId === id) return;
+  registroAtivoId = id;
+  renderTudo();
+  toggleSidebar(false);
+  salvarEstado(false);
+}
+
+function irParaRegistroEExcluir() {
+  if (!registroAtivoId) return;
+  excluirRegistro(registroAtivoId);
+}
+
+function moverRegistro(id, dir) {
+  const idx = registros.findIndex(r => r.id === id);
+  if (idx < 0) return;
+  const alvo = idx + dir;
+  if (alvo < 0 || alvo >= registros.length) return;
+  [registros[idx], registros[alvo]] = [registros[alvo], registros[idx]];
+  renderTudo();
+  salvarEstado(false);
+  showToast('Ordem dos registros alterada.', 'info');
+}
+
+function excluirRegistro(id) {
+  if (registros.length <= 1) {
+    showToast('É necessário manter ao menos 1 registro.', 'warning');
+    return;
+  }
+  const r = registros.find(x => x.id === id);
+  if (!r) return;
+  const label = r.titulo || formatarData(r.data) || 'sem título';
+  if (!confirm(`Excluir o registro "${label}"?\n\nEsta ação não pode ser desfeita.`)) return;
+
+  registros = registros.filter(x => x.id !== id);
+  if (registroAtivoId === id) {
+    registroAtivoId = registros[0].id;
+  }
+  renderTudo();
+  salvarEstado(false);
+  showToast('Registro excluído.');
+}
+
+function addRegistro(abrirSidebar = false) {
+  const novo = defaultRegistro();
+  const ultimo = registros[registros.length - 1];
+  if (ultimo && ultimo.data) {
+    const dt = new Date(ultimo.data + 'T12:00:00');
+    dt.setDate(dt.getDate() + 1);
+    novo.data = dt.toISOString().split('T')[0];
+  }
+  registros.push(novo);
+  registroAtivoId = novo.id;
+  renderTudo();
+  salvarEstado(false);
+  if (abrirSidebar) renderSidebar();
+  showToast(`Registro ${registros.length} adicionado.`);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ANEXOS
+   ═══════════════════════════════════════════════════════════ */
+function handleFileSelect(event, regId) {
+  const files = event.target.files;
+  if (!files.length) return;
+  const r = registros.find(x => x.id === regId);
+  if (!r) return;
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      r.evidences.push({
+        id: 'ev_' + Date.now() + Math.random().toString(36).substr(2, 6),
+        name: file.name, size: file.size,
+        type: file.type || 'application/octet-stream',
+        src: e.target.result
+      });
+      renderGalleryForRegistro(regId);
+      salvarEstado(false);
+    };
+    reader.readAsDataURL(file);
+  });
+  showToast('Anexo(s) adicionado(s).');
+}
+
+function renderGalleryForRegistro(regId) {
+  const r = registros.find(x => x.id === regId);
+  if (!r) return;
+  const gallery = document.querySelector(`[data-gallery="${regId}"]`);
+  const empty = document.querySelector(`[data-empty="${regId}"]`);
+  if (!gallery || !empty) return;
+
+  if (r.evidences.length === 0) {
+    gallery.innerHTML = '';
+    gallery.classList.add('hidden');
+    gallery.classList.remove('grid');
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  gallery.classList.remove('hidden');
+  gallery.classList.add('grid');
+  gallery.innerHTML = '';
+
+  r.evidences.forEach(item => {
+    const meta = getFileIcon(item.type, item.name);
+    const card = document.createElement('div');
+    card.className = 'group relative bg-white border border-ink-200 overflow-hidden shadow-sm hover:shadow-cardHover transition-all flex flex-col';
+    let preview = '';
+    if (meta.isImage) {
+      preview = `<div class="aspect-video cursor-pointer bg-ink-100 overflow-hidden" onclick="openMedia('${regId}','${item.id}')"><img src="${item.src}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"></div>`;
+    } else if (meta.isVideo) {
+      preview = `<div class="aspect-video flex flex-col items-center justify-center bg-ink-950 text-white cursor-pointer" onclick="openMedia('${regId}','${item.id}')"><i class="fa-solid fa-circle-play text-white text-3xl"></i><span class="text-[9px] mt-1 font-semibold uppercase tracking-widest">Vídeo</span></div>`;
+    } else {
+      preview = `<div class="aspect-video flex flex-col items-center justify-center bg-ink-50 p-1 cursor-pointer" onclick="openMedia('${regId}','${item.id}')"><i class="fa-solid ${meta.icon} ${meta.color} text-3xl"></i><span class="text-[9px] uppercase font-semibold mt-1 text-ink-500">${item.name.split('.').pop()}</span></div>`;
+    }
+    card.innerHTML = `
+      ${preview}
+      <div class="p-2 text-[10px] bg-white border-t border-ink-200">
+        <p class="truncate font-semibold text-ink-800" title="${item.name}">${item.name}</p>
+        <p class="text-ink-400 text-[9px]">${formatFileSize(item.size)}</p>
+        <div class="flex justify-end gap-0.5 mt-1.5 border-t border-ink-100 pt-1.5">
+          <button onclick="openMedia('${regId}','${item.id}')" class="no-print p-1.5 hover:text-ink-900 hover:bg-ink-100 rounded transition-colors" title="Visualizar"><i class="fa-solid fa-expand"></i></button>
+          <button onclick="downloadFile('${regId}','${item.id}')" class="no-print p-1.5 hover:text-ink-900 hover:bg-ink-100 rounded transition-colors" title="Baixar"><i class="fa-solid fa-download"></i></button>
+          <button onclick="removeEvidence('${regId}','${item.id}')" class="no-print p-1.5 hover:text-metso-500 hover:bg-metso-50 rounded transition-colors" title="Remover"><i class="fa-solid fa-trash-can"></i></button>
+        </div>
+      </div>`;
+    gallery.appendChild(card);
+  });
+}
+
+function removeEvidence(regId, evId) {
+  const r = registros.find(x => x.id === regId);
+  if (!r) return;
+  r.evidences = r.evidences.filter(e => e.id !== evId);
+  renderGalleryForRegistro(regId);
+  salvarEstado(false);
+  showToast('Anexo removido.');
+}
+
+function downloadFile(regId, evId) {
+  const r = registros.find(x => x.id === regId);
+  const ev = r && r.evidences.find(e => e.id === evId);
+  if (!ev) return;
+  const a = document.createElement('a');
+  a.href = ev.src; a.download = ev.name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function openMedia(regId, evId) {
+  const r = registros.find(x => x.id === regId);
+  const ev = r && r.evidences.find(e => e.id === evId);
+  if (!ev) return;
+  const meta = getFileIcon(ev.type, ev.name);
+  const cont = document.getElementById('modalContentContainer');
+  const cap = document.getElementById('modalCaption');
+  const modal = document.getElementById('imageModal');
+  cont.innerHTML = '';
+  cap.textContent = ev.name;
+
+  if (meta.isImage) {
+    const img = document.createElement('img');
+    img.src = ev.src; img.className = 'max-h-[75vh] w-auto max-w-full object-contain rounded shadow-2xl';
+    cont.appendChild(img);
+  } else if (meta.isVideo) {
+    const v = document.createElement('video');
+    v.src = ev.src; v.controls = true; v.autoplay = true;
+    v.className = 'max-h-[75vh] w-full max-w-3xl rounded shadow-2xl bg-black';
+    cont.appendChild(v);
+  } else if (meta.isPdf) {
+    const iframe = document.createElement('iframe');
+    iframe.src = ev.src; iframe.className = 'w-full h-[75vh] max-w-4xl rounded shadow-2xl bg-white';
+    cont.appendChild(iframe);
+  } else {
+    showToast('Pré-visualização indisponível.', 'warning');
+    downloadFile(regId, evId);
+    return;
+  }
+  modal.classList.remove('hidden');
+}
+
+function closeModal() {
+  const cont = document.getElementById('modalContentContainer');
+  const v = cont && cont.querySelector('video');
+  if (v) v.pause();
+  if (cont) cont.innerHTML = '';
+  document.getElementById('imageModal').classList.add('hidden');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════════════════ */
+function formatFileSize(bytes) {
+  if (!bytes) return '0 B';
+  const k = 1024, sizes = ['B','KB','MB','GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+function getFileIcon(type, name) {
+  const ext = name.split('.').pop().toLowerCase();
+  if (type.startsWith('image/')) return { icon: 'fa-image', color: 'text-ink-600', isImage: true, isVideo: false, isPdf: false };
+  if (type.startsWith('video/')) return { icon: 'fa-file-video', color: 'text-ink-600', isImage: false, isVideo: true, isPdf: false };
+  if (type.includes('pdf') || ext === 'pdf') return { icon: 'fa-file-pdf', color: 'text-metso-500', isImage: false, isVideo: false, isPdf: true };
+  if (['doc','docx'].includes(ext)) return { icon: 'fa-file-word', color: 'text-ink-600', isImage:false, isVideo:false, isPdf:false };
+  if (['xls','xlsx','csv'].includes(ext)) return { icon: 'fa-file-excel', color: 'text-ink-600', isImage:false, isVideo:false, isPdf:false };
+  if (['ppt','pptx'].includes(ext)) return { icon: 'fa-file-powerpoint', color: 'text-ink-600', isImage:false, isVideo:false, isPdf:false };
+  if (['zip','rar','7z'].includes(ext)) return { icon: 'fa-file-zipper', color: 'text-ink-600', isImage:false, isVideo:false, isPdf:false };
+  if (type.startsWith('audio/')) return { icon: 'fa-file-audio', color: 'text-ink-600', isImage:false, isVideo:false, isPdf:false };
+  return { icon: 'fa-file', color: 'text-ink-400', isImage:false, isVideo:false, isPdf:false };
+}
+
+function getValorHeader(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : '';
+}
+
+function aplicarHeader(h) {
+  if (!h) return;
+  
+  if (h.wo !== undefined) document.getElementById('inputWO').value = h.wo;
+  if (h.equipamento !== undefined) document.getElementById('inputEquipamento').value = h.equipamento;
+  if (h.noSerie !== undefined) document.getElementById('inputNoSerie').value = h.noSerie;
+  if (h.elaboradoPor !== undefined) document.getElementById('inputElaboradoPor').value = h.elaboradoPor;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['inputWO','inputEquipamento','inputNoSerie','inputElaboradoPor'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', () => {
+      salvarEstado(false);
+      renderTudo();
+    });
+  });
+});
+
+/* ═══════════════════════════════════════════════════════════
+   PERSISTÊNCIA
+   ═══════════════════════════════════════════════════════════ */
+function coletarEstado() {
+  return {
+    versao: 2,
+    header: {
+      wo: getValorHeader('inputWO'),
+      equipamento: getValorHeader('inputEquipamento'),
+      noSerie: getValorHeader('inputNoSerie'),
+      elaboradoPor: getValorHeader('inputElaboradoPor')
+    },
+    registros,
+    registroAtivoId,
+    exportedAt: new Date().toISOString()
+  };
+}
+
+function salvarEstado(notificar = false) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(coletarEstado()));
+    if (notificar) showToast('Rascunho salvo localmente!');
+  } catch (e) {
+    if (notificar) showToast('Erro ao salvar.', 'warning');
+  }
+}
+
+function carregarEstado() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return false;
+  try {
+    const s = JSON.parse(raw);
+    if (s.header) aplicarHeader(s.header);
+    if (Array.isArray(s.registros) && s.registros.length) {
+      registros = s.registros.map(r => ({ ...defaultRegistro(), ...r }));
+      registroAtivoId = s.registroAtivoId && registros.find(x => x.id === s.registroAtivoId)
+        ? s.registroAtivoId
+        : registros[0].id;
+      return true;
+    }
+  } catch (e) { console.warn(e); }
+  return false;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EXPORT / IMPORT
+   ═══════════════════════════════════════════════════════════ */
+async function exportJSONState() {
+  const s = coletarEstado();
+  const json = JSON.stringify(s, null, 2);
+  const wo = (s.header.wo || 'WO').replace(/\s+/g, '_');
+  const nomeArquivo = `Pecas_Sobressalentes_Metso_${wo}_${s.registros.length}registros.json`;
+
+  if ('showSaveFilePicker' in window) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: nomeArquivo,
+        types: [{ description: 'Arquivo JSON', accept: { 'application/json': ['.json'] } }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(json);
+      await writable.close();
+      showToast(`Backup salvo: ${handle.name}`);
+      return;
+    } catch (err) {
+      if (err.name === 'AbortError') { showToast('Salvamento cancelado.', 'info'); return; }
+      console.warn('File System Access falhou, usando fallback:', err);
+    }
+  }
+
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nomeArquivo;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`Exportado: ${s.registros.length} registro(s).`);
+}
+
+function importJSONState(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const s = JSON.parse(e.target.result);
+      if (s.header) aplicarHeader(s.header);
+      if (Array.isArray(s.registros) && s.registros.length) {
+        registros = s.registros.map(r => ({ ...defaultRegistro(), ...r }));
+        registroAtivoId = registros[0].id;
+        renderTudo();
+        salvarEstado(false);
+        showToast(`${registros.length} registro(s) importado(s).`);
+      } else {
+        showToast('JSON sem registros válidos.', 'error');
+      }
+    } catch (err) {
+      showToast('Arquivo JSON inválido.', 'error');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESET / CLEAR
+   ═══════════════════════════════════════════════════════════ */
+function loadTemplateData() {
+  if (!confirm('Substituir todos os registros pelo modelo padrão?')) return;
+  aplicarHeader(defaultHeader);
+  const r = defaultRegistro();
+  r.titulo = "DIAGNOSTICO TECNICO DE CAMPO E AVALIACAO OPERACIONAL";
+  r.observacoes = `A tecnologia continua a transformar profundamente a maneira como nos comunicamos, trabalhamos e vivemos no dia a dia. A cada novo avanço, surgem ferramentas inovadoras que otimizam processos complexos, encurtam distâncias geográficas e facilitam o acesso a uma quantidade praticamente incalculável de informações em questão de segundos.
+
+Por outro lado, o contato com a natureza e o cultivo de momentos de pausa continuam sendo fundamentais para a nossa saúde mental e física. Caminhar ao ar livre, respirar ar puro e contemplar a beleza das paisagens naturais ajudam a desacelerar o ritmo frenético da rotina urbana e a renovar as nossas energias.`;
+  registros = [r];
+  registroAtivoId = r.id;
+  renderTudo();
+  salvarEstado(false);
+  showToast('Modelo padrão Metso carregado.', 'info');
+}
+
+function clearAll() {
+  if (!confirm('Limpar TODOS os registros e voltar a 1 registro em branco?')) return;
+  ['inputWO','inputEquipamento','inputNoSerie','inputElaboradoPor'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const r = defaultRegistro();
+  registros = [r];
+  registroAtivoId = r.id;
+  renderTudo();
+  salvarEstado(false);
+  showToast('Tudo limpo.', 'warning');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HELPERS FINAIS
+   ═══════════════════════════════════════════════════════════ */
+function escapar(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function formatarData(iso) {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  const m = document.getElementById('toastMessage');
+  const i = document.getElementById('toastIcon');
+  m.textContent = msg;
+  const map = {
+    success: 'fa-circle-check text-white',
+    error: 'fa-circle-exclamation text-metso-500',
+    warning: 'fa-triangle-exclamation text-white',
+    info: 'fa-circle-info text-ink-400'
+  };
+  i.className = 'fa-solid ' + (map[type] || map.success);
+  t.classList.remove('translate-y-20', 'opacity-0');
+  setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000);
+}
+</script>
+</body>
+</html>

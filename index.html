@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capa e Relatório de Visita - Metso</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            metso: { 50:'#fdf2f2', 100:'#fbe1e1', 500:'#c8102e', 600:'#a80d26', 700:'#8a0a1f' },
+            ink: {
+              0:'#ffffff', 25:'#fbfbfc', 50:'#f6f7f9', 100:'#eef0f3', 150:'#e4e7ec',
+              200:'#d8dce3', 300:'#b9c0cb', 400:'#8f98a7', 500:'#6a7383', 600:'#4b5361',
+              700:'#363c47', 800:'#23272f', 900:'#14171c', 950:'#0a0c10'
+            }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            card: '0 1px 2px rgba(10,12,16,.04), 0 4px 12px rgba(10,12,16,.06)',
+            cardHover: '0 2px 4px rgba(10,12,16,.06), 0 12px 24px rgba(10,12,16,.08)',
+            sidebar: '4px 0 32px rgba(10,12,16,.18)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    * { font-family: 'Inter', system-ui, sans-serif; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+    /* ═══════════════════════════════════════════════════════════
+       CHECKBOX CUSTOMIZADO
+       Na tela: mostra apenas o input nativo, esconde o espelho.
+       Na impressão: esconde o input nativo, mostra o espelho.
+       ═══════════════════════════════════════════════════════════ */
+    .print-checkbox { display: none; }
+
+    .custom-checkbox {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #8f98a7;
+      border-radius: 3px;
+      margin-right: 6px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       NAVBAR (não aparece na impressão)
+       ═══════════════════════════════════════════════════════════ */
+    .app-navbar {
+      background: #0a0c10;
+      padding: 8px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+      border-bottom: 3px solid #c8102e;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .app-navbar a {
+      color: #b9c0cb;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 4px 8px;
+      border-radius: 3px;
+      transition: all .15s ease;
+    }
+    .app-navbar a:hover {
+      color: #fff;
+      background: rgba(255,255,255,.08);
+    }
+    .app-navbar a.active {
+      color: #fff;
+      background: #c8102e;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       IMPRESSÃO — Otimizada para A4 em Página Única
+       ═══════════════════════════════════════════════════════════ */
+    @media print {
+      @page { size: A4; margin: 8mm; }
+      
+      html, body {
+        background: #fff !important; 
+        padding: 0 !important; 
+        margin: 0 !important;
+        color: #000 !important;
+        height: auto !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .no-print { display: none !important; }
+      .shadow-card, .shadow-cardHover, .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm, .shadow-2xl, .shadow-sidebar { box-shadow: none !important; }
+
+      textarea, input, select {
+        border: none !important; 
+        background: transparent !important;
+        appearance: none !important; 
+        -webkit-appearance: none !important;
+      }
+
+      .section-head, .card-head {
+        background: #14171c !important; 
+        color: #fff !important;
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact;
+      }
+
+      .report-card {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+      }
+
+      .report-card > div { margin: 0 !important; }
+
+      .p-5 { padding: 0.5rem !important; }
+      .space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem !important; }
+      #capaImagem { max-height: 180px !important; object-fit: cover !important; }
+      #capaImagemContainer { min-height: auto !important; }
+      body > .max-w-6xl { margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
+
+      /* Lógica dos Checkboxes na Impressão */
+      .checkbox-wrapper input[type="checkbox"] { display: none !important; }
+      .checkbox-wrapper .custom-checkbox {
+        display: inline-flex !important;
+        border: 2px solid #14171c !important;
+      }
+      .checkbox-wrapper input[type="checkbox"]:checked + .custom-checkbox {
+        background-color: #c8102e !important;
+        border-color: #c8102e !important;
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact;
+      }
+      .checkbox-wrapper input[type="checkbox"]:checked + .custom-checkbox::after {
+        content: '\f00c';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        color: #fff !important;
+        font-size: 10px;
+        display: block;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       INPUTS / BOTÕES / COMPONENTES
+       ═══════════════════════════════════════════════════════════ */
+    .field-input { transition: background .15s, border-color .15s; }
+    .field-input:focus { background: #f6f7f9; outline: none; }
+    input::placeholder, textarea::placeholder { color: #8f98a7; }
+
+    .btn-tool { transition: all .15s ease; white-space: nowrap; }
+    .btn-tool:hover { transform: translateY(-1px); }
+    .btn-tool:active { transform: translateY(0); }
+
+    .section-head { background: #14171c; letter-spacing: .08em; }
+
+    .btn-metso {
+      background: #14171c; color: #fff; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; font-size: 11px; padding: 10px 18px;
+      transition: background .15s ease; border: none;
+    }
+    .btn-metso:hover { background: #23272f; }
+    .btn-metso-red {
+      background: #c8102e; color: #fff; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; font-size: 11px; padding: 8px 14px;
+      transition: background .15s ease; border: none;
+    }
+    .btn-metso-red:hover { background: #a80d26; }
+    .btn-metso-outline {
+      background: transparent; color: #14171c; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; font-size: 11px; padding: 10px 18px;
+      transition: all .15s ease; border: 1px solid #14171c;
+    }
+    .btn-metso-outline:hover { background: #14171c; color: #fff; }
+
+    .metso-accent { position: relative; }
+    .metso-accent::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px; background: #c8102e;
+    }
+    .metso-heading { font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; line-height: 1.1; }
+
+    :focus-visible { outline: 2px solid #14171c; outline-offset: 2px; border-radius: 4px; }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #b9c0cb; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #8f98a7; }
+  </style>
+</head>
+<!-- CORREÇÃO: Removido todo o padding do body para colar a navbar no topo e nas laterais -->
+<body class="bg-ink-100 min-h-screen text-ink-800 antialiased">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVBAR DE NAVEGAÇÃO ENTRE PÁGINAS
+       ═══════════════════════════════════════════════════════════ -->
+  <nav class="app-navbar no-print">
+    <a href="index.html" class="active">Capa</a>
+    <a href="1.0 Introdutção e objetivos REV03.html">Introdução</a>
+    <a href="2.0 Diário de visita REV03.html">Diário</a>
+    <a href="3.0 Observações registradas REV03.html">Observações</a>
+    <a href="4.0 Orientações recomendações feitas ao cliente REV03.html">Orientações</a>
+    <a href="5.0 recomendações de peças Sobressalentes.html">Peças</a>
+  </nav>
+
+  <!-- Barra Superior (No Print) -->
+  <!-- CORREÇÃO: Removido max-w-6xl e mb-5. Adicionado padding interno para respiro -->
+  <div class="w-full pt-3 sm:pt-5 pb-3 sm:pb-5 px-3 sm:px-5 no-print">
+    <div class="bg-white rounded-lg shadow-card border border-ink-200 overflow-hidden">
+      <div class="px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-4">
+          <div class="flex flex-col leading-none">
+            <img src="img/metso-logo.png" alt="Metso" class="h-6 w-auto object-contain">
+            <span class="text-metso-500 text-[8px] font-bold uppercase tracking-[.25em] mt-1">Field Service</span>
+          </div>
+          <div class="h-8 w-px bg-ink-200 hidden sm:block"></div>
+          <div class="hidden sm:block">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest">Capa</div>
+            <div class="text-sm font-bold text-ink-900 leading-tight">Relatório de Visita</div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5">
+          <label class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 cursor-pointer border border-ink-200 uppercase tracking-wider" title="Carregar JSON">
+            <i class="fa-solid fa-folder-open"></i><span class="hidden sm:inline">Carregar</span>
+            <input type="file" id="jsonFileInput" accept=".json" onchange="importJSONState(event)" class="hidden">
+          </label>
+          <button onclick="exportJSONState()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Salvar JSON">
+            <i class="fa-solid fa-floppy-disk"></i><span class="hidden sm:inline">Salvar</span>
+          </button>
+          <button onclick="loadTemplateData()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Restaurar modelo">
+            <i class="fa-solid fa-rotate-left"></i><span class="hidden sm:inline">Reset</span>
+          </button>
+          <button onclick="clearForm()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Limpar tudo">
+            <i class="fa-solid fa-broom"></i><span class="hidden sm:inline">Limpar</span>
+          </button>
+          <button onclick="window.print()" class="btn-metso rounded shadow-sm flex items-center gap-1.5" title="Imprimir / Gerar PDF">
+            <i class="fa-solid fa-print"></i><span>Imprimir</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container Principal do Relatório -->
+  <!-- CORREÇÃO: Removido max-w-6xl e mx-auto. Adicionado mx-3 sm:mx-5 mb-3 sm:mb-5 para respiro -->
+  <form id="reportForm" onsubmit="event.preventDefault();" class="w-full bg-white rounded-lg shadow-card border border-ink-200 overflow-hidden report-card mx-3 sm:mx-5 mb-3 sm:mb-5" style="width: calc(100% - 1.5rem); margin-left: auto; margin-right: auto; margin-bottom: 0.75rem;">
+    
+    <!-- Cabeçalho do Documento -->
+    <div class="card-head bg-ink-950 text-white px-5 py-4 border-b-4 border-metso-500 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div class="flex items-center gap-4">
+        <img src="img/metso-logo.png" alt="Metso" class="h-6 w-auto object-contain brightness-0 invert">
+        <span class="h-8 w-px bg-white/20"></span>
+        <div>
+          <div class="text-[10px] text-metso-500 font-bold uppercase tracking-[.2em]">Field Service</div>
+          <h1 class="metso-heading text-sm sm:text-base text-white mt-0.5">Relatório de Visita ao Site</h1>
+        </div>
+      </div>
+      
+      <!-- Campos WO, OS e Data -->
+      <div class="flex flex-col items-start sm:items-end gap-1">
+        <div class="flex items-center gap-2 bg-white/5 px-3 py-1 border border-white/10 w-full sm:w-auto justify-between sm:justify-start">
+          <span class="text-[9px] font-bold text-ink-400 uppercase tracking-widest w-8 text-left">WO</span>
+          <input type="text" id="inputWO" class="font-black text-metso-500 text-sm bg-transparent text-right w-24 outline-none uppercase placeholder:text-ink-600" placeholder="WO-130576">
+        </div>
+        
+        <div class="flex items-center gap-2 bg-white/5 px-3 py-1 border border-white/10 w-full sm:w-auto justify-between sm:justify-start">
+          <span class="text-[9px] font-bold text-ink-400 uppercase tracking-widest w-8 text-left">OS</span>
+          <input type="text" id="inputOS" class="font-black text-metso-500 text-sm bg-transparent text-right w-24 outline-none uppercase placeholder:text-ink-600" placeholder="OS-00000">
+        </div>
+
+        <div class="flex items-center gap-2 bg-white/5 px-3 py-1 border border-white/10 w-full sm:w-auto justify-between sm:justify-start">
+          <span class="text-[9px] font-bold text-ink-400 uppercase tracking-widest w-8 text-left">Data</span>
+          <input type="date" id="inputData" class="font-semibold text-xs bg-transparent text-white outline-none [color-scheme:dark]">
+        </div>
+      </div>
+    </div>
+
+    <div class="p-5 space-y-5">
+
+      <!-- Imagem Direta do Site / Equipamento -->
+      <div class="border border-ink-200 overflow-hidden">
+        <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="w-1 h-3 bg-metso-500"></span>
+            <span>Imagem do Site / Equipamento</span>
+          </div>
+          
+          <div class="no-print flex items-center gap-1">
+            <label class="btn-metso-red cursor-pointer flex items-center gap-1.5 rounded-sm shadow-sm" title="Selecionar Imagem">
+              <i class="fa-solid fa-image"></i> Alterar
+              <input type="file" id="capaImagemInput" accept="image/*" onchange="handleCapaImageSelect(event)" class="hidden">
+            </label>
+            <button type="button" id="btnRemoverCapa" onclick="removerCapaImagem()" class="bg-metso-500 hover:bg-metso-600 text-white cursor-pointer flex items-center justify-center rounded-sm shadow-sm px-3 py-2 transition-colors border border-metso-600" title="Remover Imagem">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div id="capaImagemContainer" class="w-full bg-ink-50 relative group flex items-center justify-center min-h-[200px]">
+          <img id="capaImagem" src="images.jpeg" alt="Equipamento Metso" class="w-full h-48 sm:h-64 object-cover">
+          
+          <div id="capaImagemPlaceholder" class="hidden flex-col items-center justify-center py-10 text-ink-400 w-full">
+            <i class="fa-solid fa-image text-4xl mb-3 text-ink-300"></i>
+            <p class="text-sm font-medium">Nenhuma imagem selecionada.</p>
+            <p class="text-xs text-ink-400 mt-1">Clique em "Alterar" para adicionar uma capa.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO 1: INFORMAÇÕES GERAIS -->
+      <div class="border border-ink-200 overflow-hidden">
+        <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center gap-2.5">
+          <span class="w-1 h-3 bg-metso-500"></span>
+          <span>Informações Gerais sobre o Atendimento</span>
+        </div>
+        
+        <div class="divide-y divide-ink-200 bg-white">
+          
+          <!-- Relatado Por & Distribuído Para -->
+          <div class="flex flex-col md:flex-row">
+            <div class="flex md:w-1/2 border-b md:border-b-0 md:border-r border-ink-200">
+              <div class="bg-ink-50 font-bold text-ink-700 px-3 py-2 w-32 flex items-center shrink-0 uppercase text-[10px] tracking-wider border-r border-ink-200">
+                Relatado Por:
+              </div>
+              <div class="flex-grow p-1">
+                <input type="text" id="inputRelatadoPor" class="field-input w-full h-full px-2 py-1 font-semibold outline-none focus:bg-ink-50/50" placeholder="Nome do autor...">
+              </div>
+            </div>
+
+            <div class="flex md:w-1/2">
+              <div class="bg-ink-50 font-bold text-ink-700 px-3 py-2 w-32 flex items-center shrink-0 uppercase text-[10px] tracking-wider border-r border-ink-200">
+                Distribuído Para:
+              </div>
+              <div class="flex-grow p-2 flex flex-col gap-2 justify-center">
+                <div id="distribuidosContainer" class="flex flex-col gap-1 w-full"></div>
+                <div class="no-print flex items-center gap-1.5 mt-1">
+                  <input type="text" id="novoDestinatarioInput" class="field-input flex-grow px-2 py-1 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white" placeholder="Adicionar destinatário..." onkeydown="if(event.key==='Enter'){event.preventDefault(); adicionarDestinatario();}">
+                  <button type="button" onclick="adicionarDestinatario()" class="btn-metso-red rounded-sm py-1.5 px-3 flex items-center gap-1 shrink-0">
+                    <i class="fa-solid fa-plus"></i> Incluir
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cliente / Local -->
+          <div class="flex flex-col md:flex-row">
+            <div class="bg-ink-50 font-bold text-ink-700 px-3 py-2 w-full md:w-32 flex items-center shrink-0 uppercase text-[10px] tracking-wider border-b md:border-b-0 md:border-r border-ink-200">
+              Cliente / Local:
+            </div>
+            <div class="flex-grow p-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <div class="text-[9px] uppercase font-bold text-ink-500 tracking-widest mb-1">Empresa</div>
+                <input type="text" id="inputClienteEmpresa" class="field-input w-full px-2 py-1.5 border border-ink-200 rounded font-semibold text-xs outline-none focus:border-ink-900 uppercase" placeholder="Nome da Empresa...">
+              </div>
+              <div>
+                <div class="text-[9px] uppercase font-bold text-ink-500 tracking-widest mb-1">Unidade / Site</div>
+                <input type="text" id="inputClienteUnidade" class="field-input w-full px-2 py-1.5 border border-ink-200 rounded font-semibold text-xs outline-none focus:border-ink-900 uppercase" placeholder="Unidade / Planta / Cidade...">
+              </div>
+              <div>
+                <div class="text-[9px] uppercase font-bold text-ink-500 tracking-widest mb-1">País</div>
+                <input type="text" id="inputClientePais" class="field-input w-full px-2 py-1.5 border border-ink-200 rounded font-semibold text-xs outline-none focus:border-ink-900 uppercase" placeholder="País...">
+              </div>
+            </div>
+          </div>
+
+          <!-- IDs Metso -->
+          <div class="flex flex-col sm:flex-row">
+            <div class="flex sm:w-1/2 border-b sm:border-b-0 sm:border-r border-ink-200">
+              <div class="bg-ink-50 font-bold text-ink-700 px-3 py-2 w-32 flex items-center shrink-0 uppercase text-[10px] tracking-wider border-r border-ink-200">
+                ID Metso Site:
+              </div>
+              <div class="flex-grow p-1">
+                <input type="text" id="inputIdMetsoSite" class="field-input w-full h-full px-2 py-1 font-medium outline-none focus:bg-ink-50/50 uppercase" placeholder="Ex: S-22146">
+              </div>
+            </div>
+
+            <div class="flex sm:w-1/2">
+              <div class="bg-ink-50 font-bold text-ink-700 px-3 py-2 w-32 flex items-center shrink-0 uppercase text-[10px] tracking-wider border-r border-ink-200">
+                ID Metso Equip.:
+              </div>
+              <div class="flex-grow p-1">
+                <input type="text" id="inputIdMetsoEquipamento" class="field-input w-full h-full px-2 py-1 font-medium outline-none focus:bg-ink-50/50 uppercase" placeholder="Ex: 80540836">
+              </div>
+            </div>
+          </div>
+
+          <!-- Contatos no Cliente -->
+          <div class="flex flex-col md:flex-row">
+            <div class="bg-ink-50 font-bold text-ink-700 px-3 py-2 w-full md:w-32 flex items-center shrink-0 uppercase text-[10px] tracking-wider border-b md:border-b-0 md:border-r border-ink-200">
+              Contato no Cliente:
+            </div>
+            <div class="flex-grow p-3 flex flex-col gap-3">
+              <div id="contatosClienteContainer" class="flex flex-col gap-1 w-full"></div>
+              
+              <div class="no-print bg-ink-50 p-2.5 rounded border border-ink-200 flex flex-wrap items-center gap-2">
+                <input type="text" id="novoContatoNome" class="field-input flex-grow min-w-[120px] px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white" placeholder="Nome...">
+                <input type="text" id="novoContatoEmail" class="field-input flex-grow min-w-[140px] px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white" placeholder="Contato / E-mail...">
+                <input type="text" id="novoContatoCargo" class="field-input w-28 sm:w-36 px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white" placeholder="Cargo...">
+                <button type="button" onclick="adicionarContatoCliente()" class="btn-metso-red rounded-sm py-1.5 px-3 flex items-center gap-1 shrink-0">
+                  <i class="fa-solid fa-plus"></i> Incluir
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tipo Relatório (CHECKBOXES CORRIGIDOS) -->
+          <div class="flex items-center px-3 py-2.5 bg-white gap-4">
+            <span class="font-bold text-ink-700 uppercase text-[10px] tracking-wider w-32 shrink-0">Tipo de Relatório:</span>
+            <div class="flex items-center space-x-4">
+              <label class="flex items-center cursor-pointer checkbox-wrapper">
+                <input type="checkbox" id="checkRelatorioCliente" class="w-4 h-4 text-metso-500 rounded border-ink-300 focus:ring-metso-500 mr-2">
+                <span class="custom-checkbox"></span>
+                <span class="font-semibold text-ink-800 text-xs ml-1">Relatório para Cliente</span>
+              </label>
+
+              <label class="flex items-center cursor-pointer checkbox-wrapper">
+                <input type="checkbox" id="checkRelatorioInterno" class="w-4 h-4 text-metso-500 rounded border-ink-300 focus:ring-metso-500 mr-2">
+                <span class="custom-checkbox"></span>
+                <span class="font-semibold text-ink-800 text-xs ml-1">Relatório Interno</span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SEÇÃO 2: PARTICIPANTES E EQUIPAMENTOS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Participantes da Visita -->
+        <div class="border border-ink-200 overflow-hidden flex flex-col">
+          <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center gap-2.5">
+            <span class="w-1 h-3 bg-metso-500"></span>
+            <span>Participantes da Visita</span>
+          </div>
+          <div class="p-3 flex flex-col gap-3 bg-white flex-grow justify-between">
+            <div id="participantesContainer" class="flex flex-col gap-1 w-full"></div>
+            
+            <div class="no-print bg-ink-50 p-2.5 rounded border border-ink-200 flex flex-wrap items-center gap-1.5 mt-auto">
+              <input type="text" id="partEmpresaInput" class="field-input w-24 sm:w-28 px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white" placeholder="Empresa...">
+              <input type="text" id="partNomeInput" class="field-input flex-grow min-w-[100px] px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white font-semibold" placeholder="Nome...">
+              <input type="text" id="partCargoInput" class="field-input w-20 sm:w-24 px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white" placeholder="Cargo...">
+              <button type="button" onclick="adicionarParticipante()" class="btn-metso-red rounded-sm py-1.5 px-2.5 flex items-center gap-1 shrink-0">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Equipamentos Metso no Site -->
+        <div class="border border-ink-200 overflow-hidden flex flex-col">
+          <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center gap-2.5">
+            <span class="w-1 h-3 bg-metso-500"></span>
+            <span>Equipamentos Metso no Site</span>
+          </div>
+          <div class="p-3 flex flex-col gap-3 bg-white flex-grow justify-between">
+            <div id="equipamentosContainer" class="flex flex-col gap-1 w-full"></div>
+            
+            <div class="no-print bg-ink-50 p-2.5 rounded border border-ink-200 flex flex-wrap items-center gap-1.5 mt-auto">
+              <input type="text" id="eqPFInput" class="field-input w-16 sm:w-20 px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white" placeholder="PF...">
+              <input type="text" id="eqNomeInput" class="field-input flex-grow min-w-[100px] px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white font-bold uppercase" placeholder="Equipamento...">
+              <input type="text" id="eqSerialInput" class="field-input w-24 px-2 py-1.5 text-xs border border-ink-200 rounded outline-none focus:border-ink-900 bg-white uppercase" placeholder="Serial...">
+              <button type="button" onclick="adicionarEquipamento()" class="btn-metso-red rounded-sm py-1.5 px-2.5 flex items-center gap-1 shrink-0">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Rodapé do Documento -->
+    <div class="bg-ink-950 text-white px-5 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-2">
+        <img src="img/metso-logo.png" alt="Metso" class="h-5 w-auto object-contain brightness-0 invert pb-0.5">
+        <span class="text-white/40 mx-1">|</span>
+        <span class="text-ink-400 uppercase tracking-widest text-[9px] font-bold">Field Service</span>
+      </div>
+      <div class="text-center sm:text-right leading-tight text-ink-300 text-[10px] sm:text-[11px]">
+        <div>Av. Independência, 2500 — Iporanga, Sorocaba — SP, 18087-101</div>
+        <div class="font-bold mt-0.5">Metso 2025/2026 © Todos os Direitos Reservados</div>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-ink-950 text-white px-4 py-3 rounded-lg shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 border border-ink-800">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-white"></i>
+    <span id="toastMessage" class="text-sm font-semibold">Operação realizada com sucesso!</span>
+  </div>
+
+  <!-- Script Lógico -->
+  <script>
+    const STORAGE_KEY = 'metso_capa_v3';
+    const LEGACY_KEY  = 'metso_relatorio_resumido_data';
+
+    function migrarDadosLegados() {
+      try {
+        if (localStorage.getItem(STORAGE_KEY)) return;
+        const antigo = localStorage.getItem(LEGACY_KEY);
+        if (!antigo) return;
+        const parsed = JSON.parse(antigo);
+        if (!parsed) return;
+
+        const pareceCapa =
+          parsed.capaImagemSrc !== undefined ||
+          Array.isArray(parsed.participantesArray) ||
+          Array.isArray(parsed.equipamentosArray);
+
+        if (pareceCapa) {
+          localStorage.setItem(STORAGE_KEY, antigo);
+          console.log('[Metso] Dados legados migrados para', STORAGE_KEY);
+        }
+      } catch (e) {
+        console.warn('[Metso] Falha na migração de dados legados:', e);
+      }
+    }
+    migrarDadosLegados();
+
+    let listaDistribuidos = [];
+    let listaContatosCliente = [];
+    let listaParticipantes = [];
+    let listaEquipamentos = [];
+
+    const defaultData = {
+      wo: "WO-130576",
+      os: "OS-98765",
+      relatadoPor: "Primo Silva",
+      distribuidoPara: "Fernando Antônio; João Ferreira; Alisson Sales; Antônio Marcuz Neto",
+      clienteEmpresa: "Grupo Base Mineração LTDA",
+      clienteUnidade: "Extrabase unidade Jaguariúna-SP",
+      clientePais: "Brasil",
+      idMetsoSite: "S-22146",
+      idMetsoEquipamento: "80540836",
+      data: "2025-12-22",
+      capaImagemSrc: "images.jpeg",
+      contatosClienteArray: [
+        { nome: "Antônio Marcuz Neto", contato: "(15) 99817-9257 | antonio.marcuz@extrabase.com.br", cargo: "Gerente" }
+      ],
+      participantesArray: [
+        { empresa: "Metso Corporation", nome: "Primo Silva", cargo: "Assistente Técnico" }
+      ],
+      equipamentosArray: [
+        { pf: "230043", nome: "HP4 CONE CRUSHER", serial: "HP4SOR0137" }
+      ],
+      relatorioCliente: true,
+      relatorioInterno: false
+    };
+
+    function getEl(id) {
+      return document.getElementById(id);
+    }
+
+    window.onload = () => {
+      if (!loadFormState()) {
+        loadTemplateData();
+      }
+
+      const inputs = document.querySelectorAll('input:not(#novoDestinatarioInput)');
+      inputs.forEach(input => {
+        input.addEventListener('change', () => saveFormState(false));
+      });
+    };
+
+    function handleCapaImageSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Image = e.target.result;
+        atualizarCapaImagem(base64Image);
+        saveFormState(false);
+        showToast('Imagem de capa atualizada!', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function atualizarCapaImagem(src) {
+      const imgEl = getEl('capaImagem');
+      const placeholder = getEl('capaImagemPlaceholder');
+      const btnRemover = getEl('btnRemoverCapa');
+
+      if (src) {
+        imgEl.src = src;
+        imgEl.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        placeholder.classList.remove('flex');
+        btnRemover.classList.remove('hidden');
+      } else {
+        imgEl.src = '';
+        imgEl.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+        placeholder.classList.add('flex');
+        btnRemover.classList.add('hidden');
+      }
+    }
+
+    function removerCapaImagem() {
+      atualizarCapaImagem(null);
+      saveFormState(false);
+      showToast('Imagem de capa removida.', 'info');
+    }
+
+    function renderDestinatarios() {
+      const container = getEl('distribuidosContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (listaDistribuidos.length === 0) {
+        container.innerHTML = '<span class="text-[11px] text-ink-400 italic">Nenhum destinatário adicionado.</span>';
+        return;
+      }
+
+      const ul = document.createElement('ul');
+      ul.className = 'flex flex-col gap-1 w-full';
+
+      listaDistribuidos.forEach((nome, index) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between bg-ink-50 hover:bg-ink-100 px-2.5 py-1 rounded border border-ink-200 text-[11px] text-ink-800 transition-colors';
+        li.innerHTML = `
+          <span class="font-medium">${nome}</span>
+          <button type="button" onclick="removerDestinatario(${index})" class="no-print text-ink-400 hover:text-metso-500 focus:outline-none transition-colors p-1" title="Remover">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        `;
+        ul.appendChild(li);
+      });
+      container.appendChild(ul);
+    }
+
+    function adicionarDestinatario() {
+      const input = getEl('novoDestinatarioInput');
+      if (!input) return;
+      const valor = input.value.trim();
+      if (!valor) return;
+
+      listaDistribuidos.push(valor);
+      input.value = '';
+      renderDestinatarios();
+      saveFormState(false);
+      showToast('Destinatário adicionado!', 'success');
+    }
+
+    function removerDestinatario(index) {
+      listaDistribuidos.splice(index, 1);
+      renderDestinatarios();
+      saveFormState(false);
+      showToast('Destinatário removido.', 'info');
+    }
+
+    function renderContatosCliente() {
+      const container = getEl('contatosClienteContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (listaContatosCliente.length === 0) {
+        container.innerHTML = '<span class="text-[11px] text-ink-400 italic">Nenhum contato adicionado.</span>';
+        return;
+      }
+
+      const ul = document.createElement('ul');
+      ul.className = 'flex flex-col gap-1 w-full';
+
+      listaContatosCliente.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between bg-ink-50 hover:bg-ink-100 px-2.5 py-1.5 rounded border border-ink-200 text-[11px] text-ink-800 transition-colors gap-2';
+        li.innerHTML = `
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 flex-grow font-medium">
+            <span class="font-bold text-ink-900">${item.nome || ''}</span>
+            <span class="text-ink-700">${item.contato || ''}</span>
+            <span class="text-ink-500 bg-ink-200/60 px-1.5 py-0.5 rounded text-[9px] uppercase font-bold">${item.cargo || 'Cargo n/d'}</span>
+          </div>
+          <button type="button" onclick="removerContatoCliente(${index})" class="no-print text-ink-400 hover:text-metso-500 focus:outline-none transition-colors p-1" title="Remover Contato">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        `;
+        ul.appendChild(li);
+      });
+      container.appendChild(ul);
+    }
+
+    function adicionarContatoCliente() {
+      const nomeInput = getEl('novoContatoNome');
+      const emailInput = getEl('novoContatoEmail');
+      const cargoInput = getEl('novoContatoCargo');
+
+      if (!nomeInput || !emailInput || !cargoInput) return;
+      const nome = nomeInput.value.trim();
+      const contato = emailInput.value.trim();
+      const cargo = cargoInput.value.trim();
+
+      if (!nome) {
+        showToast('Informe pelo menos o nome do contato.', 'warning');
+        return;
+      }
+
+      listaContatosCliente.push({ nome, contato, cargo });
+      nomeInput.value = '';
+      emailInput.value = '';
+      cargoInput.value = '';
+
+      renderContatosCliente();
+      saveFormState(false);
+      showToast('Contato adicionado!', 'success');
+    }
+
+    function removerContatoCliente(index) {
+      listaContatosCliente.splice(index, 1);
+      renderContatosCliente();
+      saveFormState(false);
+      showToast('Contato removido.', 'info');
+    }
+
+    function renderParticipantes() {
+      const container = getEl('participantesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (listaParticipantes.length === 0) {
+        container.innerHTML = '<span class="text-[11px] text-ink-400 italic">Nenhum participante adicionado.</span>';
+        return;
+      }
+
+      const ul = document.createElement('ul');
+      ul.className = 'flex flex-col gap-1 w-full';
+
+      listaParticipantes.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between bg-ink-50 hover:bg-ink-100 px-2.5 py-1.5 rounded border border-ink-200 text-[11px] text-ink-800 transition-colors gap-2';
+        li.innerHTML = `
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 flex-grow font-medium">
+            <span class="text-ink-600 bg-ink-200/60 px-1.5 py-0.5 rounded text-[9px] uppercase font-bold">${item.empresa || 'Empresa'}</span>
+            <span class="font-bold text-ink-900">${item.nome || ''}</span>
+            <span class="text-ink-500 text-[10px]">${item.cargo ? '• ' + item.cargo : ''}</span>
+          </div>
+          <button type="button" onclick="removerParticipante(${index})" class="no-print text-ink-400 hover:text-metso-500 focus:outline-none transition-colors p-1" title="Remover Participante">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        `;
+        ul.appendChild(li);
+      });
+      container.appendChild(ul);
+    }
+
+    function adicionarParticipante() {
+      const empresaInput = getEl('partEmpresaInput');
+      const nomeInput = getEl('partNomeInput');
+      const cargoInput = getEl('partCargoInput');
+
+      if (!empresaInput || !nomeInput || !cargoInput) return;
+      const empresa = empresaInput.value.trim();
+      const nome = nomeInput.value.trim();
+      const cargo = cargoInput.value.trim();
+
+      if (!nome) {
+        showToast('Informe o nome do participante.', 'warning');
+        return;
+      }
+
+      listaParticipantes.push({ empresa, nome, cargo });
+      empresaInput.value = '';
+      nomeInput.value = '';
+      cargoInput.value = '';
+
+      renderParticipantes();
+      saveFormState(false);
+      showToast('Participante adicionado!', 'success');
+    }
+
+    function removerParticipante(index) {
+      listaParticipantes.splice(index, 1);
+      renderParticipantes();
+      saveFormState(false);
+      showToast('Participante removido.', 'info');
+    }
+
+    function renderEquipamentos() {
+      const container = getEl('equipamentosContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (listaEquipamentos.length === 0) {
+        container.innerHTML = '<span class="text-[11px] text-ink-400 italic">Nenhum equipamento adicionado.</span>';
+        return;
+      }
+
+      const ul = document.createElement('ul');
+      ul.className = 'flex flex-col gap-1 w-full';
+
+      listaEquipamentos.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between bg-ink-50 hover:bg-ink-100 px-2.5 py-1.5 rounded border border-ink-200 text-[11px] text-ink-800 transition-colors gap-2';
+        li.innerHTML = `
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 flex-grow font-medium">
+            <span class="text-metso-500 bg-metso-50 border border-metso-100 px-1.5 py-0.5 rounded text-[9px] uppercase font-bold">PF: ${item.pf || 'N/A'}</span>
+            <span class="font-extrabold text-ink-900 uppercase">${item.nome || ''}</span>
+            <span class="text-ink-500 text-[10px] font-mono">${item.serial ? 'SN: ' + item.serial : ''}</span>
+          </div>
+          <button type="button" onclick="removerEquipamento(${index})" class="no-print text-ink-400 hover:text-metso-500 focus:outline-none transition-colors p-1" title="Remover Equipamento">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        `;
+        ul.appendChild(li);
+      });
+      container.appendChild(ul);
+    }
+
+    function adicionarEquipamento() {
+      const pfInput = getEl('eqPFInput');
+      const nomeInput = getEl('eqNomeInput');
+      const serialInput = getEl('eqSerialInput');
+
+      if (!pfInput || !nomeInput || !serialInput) return;
+      const pf = pfInput.value.trim();
+      const nome = nomeInput.value.trim().toUpperCase();
+      const serial = serialInput.value.trim().toUpperCase();
+
+      if (!nome) {
+        showToast('Informe o nome do equipamento.', 'warning');
+        return;
+      }
+
+      listaEquipamentos.push({ pf, nome, serial });
+      pfInput.value = '';
+      nomeInput.value = '';
+      serialInput.value = '';
+
+      renderEquipamentos();
+      saveFormState(false);
+      showToast('Equipamento adicionado!', 'success');
+    }
+
+    function removerEquipamento(index) {
+      listaEquipamentos.splice(index, 1);
+      renderEquipamentos();
+      saveFormState(false);
+      showToast('Equipamento removido.', 'info');
+    }
+
+    function loadTemplateData() {
+      getEl('inputWO').value = defaultData.wo;
+      getEl('inputOS').value = defaultData.os;
+      getEl('inputRelatadoPor').value = defaultData.relatadoPor;
+      
+      listaDistribuidos = defaultData.distribuidoPara.split(';').map(s => s.trim()).filter(Boolean);
+      renderDestinatarios();
+
+      getEl('inputClienteEmpresa').value = defaultData.clienteEmpresa || '';
+      getEl('inputClienteUnidade').value = defaultData.clienteUnidade || '';
+      getEl('inputClientePais').value = defaultData.clientePais || '';
+
+      listaContatosCliente = [...defaultData.contatosClienteArray];
+      renderContatosCliente();
+
+      listaParticipantes = [...defaultData.participantesArray];
+      renderParticipantes();
+
+      listaEquipamentos = [...defaultData.equipamentosArray];
+      renderEquipamentos();
+
+      getEl('inputIdMetsoSite').value = defaultData.idMetsoSite;
+      getEl('inputIdMetsoEquipamento').value = defaultData.idMetsoEquipamento;
+      getEl('inputData').value = defaultData.data;
+      getEl('checkRelatorioCliente').checked = defaultData.relatorioCliente;
+      getEl('checkRelatorioInterno').checked = defaultData.relatorioInterno;
+
+      atualizarCapaImagem(defaultData.capaImagemSrc);
+
+      saveFormState(false);
+      showToast('Dados Metso carregados com sucesso!', 'info');
+    }
+
+    function clearForm() {
+      const inputs = document.querySelectorAll('input[type="text"], input[type="date"]');
+      inputs.forEach(input => input.value = '');
+
+      listaDistribuidos = [];
+      renderDestinatarios();
+      listaContatosCliente = [];
+      renderContatosCliente();
+      listaParticipantes = [];
+      renderParticipantes();
+      listaEquipamentos = [];
+      renderEquipamentos();
+
+      getEl('checkRelatorioCliente').checked = false;
+      getEl('checkRelatorioInterno').checked = false;
+
+      removerCapaImagem();
+
+      saveFormState(false);
+      showToast('Todos os campos foram limpos.', 'warning');
+    }
+
+    function collectFormData() {
+      return {
+        wo: getEl('inputWO')?.value || '',
+        os: getEl('inputOS')?.value || '',
+        relatadoPor: getEl('inputRelatadoPor')?.value || '',
+        distribuidoParaArray: listaDistribuidos,
+        distribuidoPara: listaDistribuidos.join('; '),
+        clienteEmpresa: getEl('inputClienteEmpresa')?.value || '',
+        clienteUnidade: getEl('inputClienteUnidade')?.value || '',
+        clientePais: getEl('inputClientePais')?.value || '',
+        idMetsoSite: getEl('inputIdMetsoSite')?.value || '',
+        idMetsoEquipamento: getEl('inputIdMetsoEquipamento')?.value || '',
+        data: getEl('inputData')?.value || '',
+        capaImagemSrc: !getEl('capaImagem').classList.contains('hidden') ? getEl('capaImagem').src : '',
+        contatosClienteArray: listaContatosCliente,
+        participantesArray: listaParticipantes,
+        equipamentosArray: listaEquipamentos,
+        relatorioCliente: getEl('checkRelatorioCliente')?.checked || false,
+        relatorioInterno: getEl('checkRelatorioInterno')?.checked || false
+      };
+    }
+
+    async function exportJSONState() {
+      saveFormState(false);
+      const formData = collectFormData();
+      formData.exportedAt = new Date().toISOString();
+
+      const jsonStr = JSON.stringify(formData, null, 2);
+      const fileName = `Capa_Metso_${(formData.wo || 'WO').replace(/\s+/g, '_')}_${formData.data || 'data'}.json`;
+
+      if ('showSaveFilePicker' in window) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: fileName,
+            types: [{ description: 'Arquivo JSON', accept: { 'application/json': ['.json'] } }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(jsonStr);
+          await writable.close();
+          showToast(`Backup salvo: ${handle.name}`);
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            showToast('Salvamento cancelado.', 'info');
+            return;
+          }
+          console.warn('File System Access falhou, usando fallback:', err);
+        }
+      }
+
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showToast('Capa exportada em formato JSON!');
+    }
+
+    function importJSONState(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          applyFormData(data);
+          saveFormState(false);
+          showToast('Capa carregada do arquivo JSON!');
+        } catch (err) {
+          showToast('Erro ao ler o arquivo JSON.', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function saveFormState(showNotification = true) {
+      const formData = collectFormData();
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        if (showNotification) showToast('Rascunho salvo no navegador!');
+      } catch (e) {
+        if (showNotification) showToast('Erro ao salvar no armazenamento local.', 'warning');
+      }
+    }
+
+    function loadFormState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return false;
+
+      try {
+        const formData = JSON.parse(saved);
+        applyFormData(formData);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function applyFormData(data) {
+      getEl('inputWO').value = data.wo || '';
+      getEl('inputOS').value = data.os || '';
+      getEl('inputRelatadoPor').value = data.relatadoPor || '';
+      
+      if (Array.isArray(data.distribuidoParaArray)) {
+        listaDistribuidos = data.distribuidoParaArray;
+      } else if (typeof data.distribuidoPara === 'string' && data.distribuidoPara) {
+        listaDistribuidos = data.distribuidoPara.split(';').map(s => s.trim()).filter(Boolean);
+      } else {
+        listaDistribuidos = [];
+      }
+      renderDestinatarios();
+
+      getEl('inputClienteEmpresa').value = data.clienteEmpresa || '';
+      getEl('inputClienteUnidade').value = data.clienteUnidade || '';
+      getEl('inputClientePais').value = data.clientePais || '';
+
+      if (!data.clienteEmpresa && data.cliente) {
+        const partes = data.cliente.split('|').map(s => s.trim());
+        getEl('inputClienteEmpresa').value = partes[0] || '';
+        getEl('inputClienteUnidade').value = partes[1] || '';
+        getEl('inputClientePais').value = partes[2] || '';
+      }
+
+      if (Array.isArray(data.contatosClienteArray)) {
+        listaContatosCliente = data.contatosClienteArray;
+      } else if (typeof data.contatoCliente === 'string' && data.contatoCliente) {
+        listaContatosCliente = [{ nome: data.contatoCliente, cargo: '', contato: '' }];
+      } else {
+        listaContatosCliente = [];
+      }
+      renderContatosCliente();
+
+      if (Array.isArray(data.participantesArray)) {
+        listaParticipantes = data.participantesArray;
+      } else if (data.partNome1) {
+        listaParticipantes = [{ empresa: data.partEmpresa1 || '', nome: data.partNome1, cargo: data.partCargo1 || '' }];
+      } else {
+        listaParticipantes = [];
+      }
+      renderParticipantes();
+
+      if (Array.isArray(data.equipamentosArray)) {
+        listaEquipamentos = data.equipamentosArray;
+      } else if (data.eqNome1) {
+        listaEquipamentos = [{ pf: data.eqPF1 || '', nome: data.eqNome1, serial: data.eqSerial1 || '' }];
+      } else {
+        listaEquipamentos = [];
+      }
+      renderEquipamentos();
+
+      getEl('inputIdMetsoSite').value = data.idMetsoSite || '';
+      getEl('inputIdMetsoEquipamento').value = data.idMetsoEquipamento || '';
+      getEl('inputData').value = data.data || '';
+      getEl('checkRelatorioCliente').checked = !!data.relatorioCliente;
+      getEl('checkRelatorioInterno').checked = !!data.relatorioInterno;
+
+      atualizarCapaImagem(data.capaImagemSrc);
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = getEl('toast');
+      const toastMessage = getEl('toastMessage');
+      const toastIcon = getEl('toastIcon');
+
+      if (!toast || !toastMessage || !toastIcon) return;
+
+      toastMessage.textContent = message;
+
+      if (type === 'error') {
+        toastIcon.className = 'fa-solid fa-circle-exclamation text-metso-500';
+      } else if (type === 'warning') {
+        toastIcon.className = 'fa-solid fa-triangle-exclamation text-white';
+      } else if (type === 'info') {
+        toastIcon.className = 'fa-solid fa-circle-info text-ink-400';
+      } else {
+        toastIcon.className = 'fa-solid fa-circle-check text-white';
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

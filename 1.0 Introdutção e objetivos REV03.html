@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introdução e Objetivos - Metso</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            metso: { 50:'#fdf2f2', 100:'#fbe1e1', 500:'#c8102e', 600:'#a80d26', 700:'#8a0a1f' },
+            ink: {
+              0:'#ffffff', 25:'#fbfbfc', 50:'#f6f7f9', 100:'#eef0f3', 150:'#e4e7ec',
+              200:'#d8dce3', 300:'#b9c0cb', 400:'#8f98a7', 500:'#6a7383', 600:'#4b5361',
+              700:'#363c47', 800:'#23272f', 900:'#14171c', 950:'#0a0c10'
+            }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            card: '0 1px 2px rgba(10,12,16,.04), 0 4px 12px rgba(10,12,16,.06)',
+            cardHover: '0 2px 4px rgba(10,12,16,.06), 0 12px 24px rgba(10,12,16,.08)',
+            sidebar: '4px 0 32px rgba(10,12,16,.18)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    * { font-family: 'Inter', system-ui, sans-serif; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+    /* Estilos para a impressão */
+    .print-only { display: none; }
+    textarea { resize: none; overflow: hidden; display: block; }
+
+    /* ═══════════════════════════════════════════════════════════
+       NAVBAR (não aparece na impressão)
+       ═══════════════════════════════════════════════════════════ */
+    .app-navbar {
+      background: #0a0c10;
+      padding: 8px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+      border-bottom: 3px solid #c8102e;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .app-navbar a {
+      color: #b9c0cb;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 4px 8px;
+      border-radius: 3px;
+      transition: all .15s ease;
+    }
+    .app-navbar a:hover {
+      color: #fff;
+      background: rgba(255,255,255,.08);
+    }
+    .app-navbar a.active {
+      color: #fff;
+      background: #c8102e;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       IMPRESSÃO
+       ═══════════════════════════════════════════════════════════ */
+    @media print {
+      @page { size: A4; margin: 10mm 10mm 5mm 10mm; }
+      html, body {
+        background: #fff !important; padding: 0 !important; margin: 0 !important;
+        color: #000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print { display: none !important; }
+      .shadow-card, .shadow-cardHover, .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm, .shadow-2xl, .shadow-sidebar { box-shadow: none !important; }
+
+      textarea, input, select {
+        border: none !important; background: transparent !important;
+        appearance: none !important; -webkit-appearance: none !important;
+      }
+
+      .print-only {
+        display: block !important;
+        font-size: 12px !important;
+        line-height: 1.55 !important;
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+        text-align: justify !important;
+        color: #14171c !important;
+      }
+      textarea { display: none !important; }
+
+      .section-box {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        margin-bottom: 10px !important;
+      }
+      
+      .report-card {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .section-head {
+        background: #14171c !important; color: #fff !important;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       INPUTS / BOTÕES / COMPONENTES
+       ═══════════════════════════════════════════════════════════ */
+    .field-input { transition: background .15s, border-color .15s; }
+    .field-input:focus { background: #f6f7f9; outline: none; }
+    input::placeholder, textarea::placeholder { color: #8f98a7; }
+
+    .btn-tool { transition: all .15s ease; white-space: nowrap; }
+    .btn-tool:hover { transform: translateY(-1px); }
+    .btn-tool:active { transform: translateY(0); }
+
+    .section-head { background: #14171c; letter-spacing: .08em; }
+
+    .btn-metso {
+      background: #14171c; color: #fff; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; font-size: 11px; padding: 10px 18px;
+      transition: background .15s ease; border: none;
+    }
+    .btn-metso:hover { background: #23272f; }
+    .btn-metso-red {
+      background: #c8102e; color: #fff; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; font-size: 11px; padding: 8px 14px;
+      transition: background .15s ease; border: none;
+    }
+    .btn-metso-red:hover { background: #a80d26; }
+    .btn-metso-outline {
+      background: transparent; color: #14171c; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; font-size: 11px; padding: 10px 18px;
+      transition: all .15s ease; border: 1px solid #14171c;
+    }
+    .btn-metso-outline:hover { background: #14171c; color: #fff; }
+
+    .metso-accent { position: relative; }
+    .metso-accent::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px; background: #c8102e;
+    }
+    .metso-heading { font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; line-height: 1.1; }
+
+    :focus-visible { outline: 2px solid #14171c; outline-offset: 2px; border-radius: 4px; }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #b9c0cb; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #8f98a7; }
+  </style>
+</head>
+<!-- CORREÇÃO: Removido todo o padding do body para colar a navbar no topo e nas laterais -->
+<body class="bg-ink-100 min-h-screen text-ink-800 antialiased">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVBAR DE NAVEGAÇÃO ENTRE PÁGINAS
+       ═══════════════════════════════════════════════════════════ -->
+  <nav class="app-navbar no-print">
+    <a href="index.html">Capa</a>
+    <a href="1.0 Introdutção e objetivos REV03.html" class="active">Introdução</a>
+    <a href="2.0 Diário de visita REV03.html">Diário</a>
+    <a href="3.0 Observações registradas REV03.html">Observações</a>
+    <a href="4.0 Orientações recomendações feitas ao cliente REV03.html">Orientações</a>
+    <a href="5.0 recomendações de peças Sobressalentes.html">Peças</a>
+  </nav>
+
+  <!-- Barra Superior -->
+  <!-- CORREÇÃO: Removido max-w-6xl e mb-5. Adicionado padding interno p-3 sm:p-5 para respiro -->
+  <div class="w-full pt-3 sm:pt-5 pb-3 sm:pb-5 px-3 sm:px-5">
+    <div class="no-print bg-white rounded-lg shadow-card border border-ink-200 overflow-hidden">
+      <div class="px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-4">
+          <div class="flex flex-col leading-none">
+            <img src="img/metso-logo.png" alt="Metso" class="h-6 w-auto object-contain">
+            <span class="text-metso-500 text-[8px] font-bold uppercase tracking-[.25em] mt-1">Field Service</span>
+          </div>
+          <div class="h-8 w-px bg-ink-200 hidden sm:block"></div>
+          <div class="hidden sm:block">
+            <div class="text-[10px] uppercase font-bold text-ink-500 tracking-widest">Seção 1.0</div>
+            <div class="text-sm font-bold text-ink-900 leading-tight">Introdução e Objetivos</div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5">
+          <label class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 cursor-pointer border border-ink-200 uppercase tracking-wider" title="Carregar JSON">
+            <i class="fa-solid fa-folder-open"></i><span class="hidden sm:inline">Carregar</span>
+            <input type="file" id="jsonFileInput" accept=".json" onchange="importJSONState(event)" class="hidden">
+          </label>
+          <button onclick="exportJSONState()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Salvar JSON">
+            <i class="fa-solid fa-floppy-disk"></i><span class="hidden sm:inline">Salvar</span>
+          </button>
+          <button onclick="loadTemplateData()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Restaurar modelo">
+            <i class="fa-solid fa-rotate-left"></i><span class="hidden sm:inline">Reset</span>
+          </button>
+          <button onclick="clearForm()" class="btn-tool px-3 py-2 text-[11px] font-bold text-ink-700 bg-white hover:bg-ink-100 rounded transition-colors flex items-center gap-1.5 border border-ink-200 uppercase tracking-wider" title="Limpar tudo">
+            <i class="fa-solid fa-broom"></i><span class="hidden sm:inline">Limpar</span>
+          </button>
+          <button onclick="handlePrint()" class="btn-metso rounded shadow-sm flex items-center gap-1.5" title="Imprimir / Gerar PDF">
+            <i class="fa-solid fa-print"></i><span>Imprimir</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container Principal do Relatório -->
+  <!-- CORREÇÃO: Removido max-w-6xl e mx-auto. Adicionado mx-3 sm:mx-5 e mb-3 sm:mb-5 para respiro -->
+  <form id="reportForm" onsubmit="event.preventDefault();" class="w-full bg-white rounded-lg shadow-card border border-ink-200 overflow-hidden report-card mx-3 sm:mx-5 mb-3 sm:mb-5" style="width: calc(100% - 1.5rem); margin-left: auto; margin-right: auto; margin-bottom: 0.75rem;">
+    
+    <!-- Cabeçalho do Documento -->
+    <div class="card-head bg-ink-950 text-white px-5 py-4 border-b-4 border-metso-500 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div class="flex items-center gap-4">
+        <img src="img/metso-logo.png" alt="Metso" class="h-6 w-auto object-contain brightness-0 invert">
+        <span class="h-8 w-px bg-white/20"></span>
+        <div>
+          <div class="text-[10px] text-metso-500 font-bold uppercase tracking-[.2em]">Field Service</div>
+          <h1 class="metso-heading text-sm sm:text-base text-white mt-0.5">Relatório de Visita ao Site</h1>
+        </div>
+      </div>
+      
+      <!-- Campos WO e Data -->
+      <div class="flex flex-col items-start sm:items-end gap-1">
+        <div class="flex items-center gap-2 bg-white/5 px-3 py-1 border border-white/10 w-full sm:w-auto justify-between sm:justify-start">
+          <span class="text-[9px] font-bold text-ink-400 uppercase tracking-widest w-8 text-left">WO</span>
+          <input type="text" id="inputWO" class="font-black text-metso-500 text-sm bg-transparent text-right w-24 outline-none uppercase placeholder:text-ink-600" placeholder="WO-130576">
+        </div>
+
+        <div class="flex items-center gap-2 bg-white/5 px-3 py-1 border border-white/10 w-full sm:w-auto justify-between sm:justify-start">
+          <span class="text-[9px] font-bold text-ink-400 uppercase tracking-widest w-8 text-left">Data</span>
+          <input type="date" id="inputData" class="font-semibold text-xs bg-transparent text-white outline-none [color-scheme:dark]">
+        </div>
+      </div>
+    </div>
+
+    <div class="p-5 space-y-5">
+
+      <!-- 1.0 INTRODUÇÃO E OBJETIVO DA VISITA AO CLIENTE -->
+      <div class="section-box border border-ink-200 overflow-hidden">
+        <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="w-1 h-3 bg-metso-500"></span>
+            <span>1.0 Introdução e Objetivo da Visita ao Cliente</span>
+          </div>
+          <i class="fa-solid fa-bullseye text-metso-500"></i>
+        </div>
+        <div class="p-3 bg-white">
+          <textarea id="inputObjetivo" oninput="autoResize(this)" class="field-input w-full p-2 text-xs sm:text-sm border border-ink-200 rounded outline-none focus:border-ink-900 text-justify" placeholder="Descreva a introdução e o objetivo técnico da visita..."></textarea>
+          <div id="printObjetivo" class="print-only"></div>
+        </div>
+      </div>
+
+      <!-- 1.1 CONDIÇÕES DA PLANTA/SITE NO INÍCIO DA VISITA -->
+      <div class="section-box border border-ink-200 overflow-hidden">
+        <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="w-1 h-3 bg-metso-500"></span>
+            <span>1.1 Condições da Planta / Site no Início da Visita</span>
+          </div>
+          <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+        </div>
+        <div class="p-3 bg-white">
+          <textarea id="inputCondicoesInicio" oninput="autoResize(this)" class="field-input w-full p-2 text-xs sm:text-sm border border-ink-200 rounded outline-none focus:border-ink-900 text-justify" placeholder="Detalhamento do estado inicial das instalações e não conformidades..."></textarea>
+          <div id="printCondicoesInicio" class="print-only"></div>
+        </div>
+      </div>
+
+      <!-- 1.2 CONDIÇÕES DA PLANTA/SITE NO MOMENTO DA SAÍDA -->
+      <div class="section-box border border-ink-200 overflow-hidden">
+        <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="w-1 h-3 bg-metso-500"></span>
+            <span>1.2 Condições da Planta / Site no Momento da Saída</span>
+          </div>
+          <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        </div>
+        <div class="p-3 bg-white">
+          <textarea id="inputCondicoesSaida" oninput="autoResize(this)" class="field-input w-full p-2 text-xs sm:text-sm border border-ink-200 rounded outline-none focus:border-ink-900 text-justify" placeholder="Status final de operação, versão dos sistemas atualizados e pendências..."></textarea>
+          <div id="printCondicoesSaida" class="print-only"></div>
+        </div>
+      </div>
+
+      <!-- 1.3 CONSIDERAÇÕES FINAIS SOBRE O ATENDIMENTO -->
+      <div class="section-box border border-ink-200 overflow-hidden">
+        <div class="section-head text-white font-black text-[11px] px-4 py-2.5 uppercase flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="w-1 h-3 bg-metso-500"></span>
+            <span>1.3 Considerações Finais sobre o Atendimento</span>
+          </div>
+          <i class="fa-solid fa-clipboard-check text-blue-400"></i>
+        </div>
+        <div class="p-3 bg-white">
+          <textarea id="inputConsideracoes" oninput="autoResize(this)" class="field-input w-full p-2 text-xs sm:text-sm border border-ink-200 rounded outline-none focus:border-ink-900 text-justify" placeholder="Conclusões técnicas e recomendações de ações corretivas ao cliente..."></textarea>
+          <div id="printConsideracoes" class="print-only"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Rodapé do Documento -->
+    <div class="bg-ink-950 text-white px-5 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-2">
+        <img src="img/metso-logo.png" alt="Metso" class="h-5 w-auto object-contain brightness-0 invert pb-0.5">
+        <span class="text-white/40 mx-1">|</span>
+        <span class="text-ink-400 uppercase tracking-widest text-[9px] font-bold">Field Service</span>
+      </div>
+      <div class="text-center sm:text-right leading-tight text-ink-300 text-[10px] sm:text-[11px]">
+        <div>Av. Independência, 2500 — Iporanga, Sorocaba — SP, 18087-101</div>
+        <div class="font-bold mt-0.5">Metso 2025/2026 © Todos os Direitos Reservados</div>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-ink-950 text-white px-4 py-3 rounded-lg shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 border border-ink-800">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-white"></i>
+    <span id="toastMessage" class="text-sm font-semibold">Operação realizada com sucesso!</span>
+  </div>
+
+  <!-- Script Lógico -->
+  <script>
+    const STORAGE_KEY = 'metso_introducao_v3';
+    const LEGACY_KEY  = 'metso_relatorio_resumido_data';
+
+    function migrarDadosLegados() {
+      try {
+        if (localStorage.getItem(STORAGE_KEY)) return;
+        const antigo = localStorage.getItem(LEGACY_KEY);
+        if (!antigo) return;
+        const parsed = JSON.parse(antigo);
+        if (parsed && (parsed.objetivo !== undefined || parsed.condicoesInicio !== undefined)) {
+          localStorage.setItem(STORAGE_KEY, antigo);
+          console.log('[Metso] Dados legados migrados para', STORAGE_KEY);
+        }
+      } catch (e) {
+        console.warn('[Metso] Falha na migração de dados legados:', e);
+      }
+    }
+    migrarDadosLegados();
+
+    const defaultData = {
+      wo: "WO-130576",
+      data: "2025-12-22",
+      objetivo: "A visita técnica à Extrabase (Jaguariúna/SP) visou solucionar uma falha de calibração no Britador HP4 (\"Não pode calibrar, comprove a pressão de rotação\"). O objetivo central, executado em 22/12/2025, foi atualizar o software IC70C para a versão 2.2.12 (firmware) e CODESYS 1.5.0.1. Essa atualização corrige o erro relatado e permite a configuração de valores negativos no parâmetro HS621, resolvendo definitivamente a falha na pressão de rotação.",
+      condicoesInicio: "No início da visita técnica à unidade de Jaguariúna-SP, identificou-se um cenário crítico em termos de manutenção e conservação do equipamento. Foi detectado manchas de vazamento significativo no sistema de trava, decorrente de uma intervenção realizada pela própria equipe do cliente na semana anterior após o rompimento de uma câmara. Além disso, a planta apresenta graves não conformidades técnicas, como a ausência de cobertura de proteção na unidade hidráulica e de lubrificação, o que resultou numa acumulação severa de poeira sobre válvulas, sensores e pontos de abastecimento, inviabilizando uma troca de óleo segura sem risco de contaminação imediata.\n\nSomado a isto, o soprador e o filtro de ar encontram-se instalados numa zona baixa com elevada concentração de detritos, contrariando as normas do manual e comprometendo a integridade de componentes internos como buchas e pinhão. O sistema de retorno de óleo também apresenta falhas estruturais, com mangueiras sem o suporte rígido necessário, criando deformações que dificultam o fluxo e podem gerar novos vazamentos. Este estado geral de sujidade e o posicionamento inadequado dos componentes elevam consideravelmente o risco de falhas elétricas e de desgaste prematuro de todo o sistema operacional.",
+      condicoesSaida: "Ao final da visita técnica, o britador operava de forma contínua e estável, sem apresentar paragens relacionadas com a intervenção da Metso. O sistema IC70C foi atualizado com sucesso para a versão de firmware 2.2.12 e o ambiente de execução CODESYS 1.5.0.1, tendo todos os parâmetros operacionais sido restabelecidos e validados após o procedimento. Durante o acompanhamento da operação, a alimentação trabalhou de maneira constante, mantendo a câmara de britagem preenchida em 60% da sua cavidade.\n\nEmbora tenha ocorrido uma interrupção na planta, esta foi identificada como uma sobrecarga no sistema de alimentação do próprio cliente, facto comprovado através do backup do log da máquina. No encerramento das atividades, foi realizado um backup de segurança final para garantir a integridade dos dados e do histórico de produção. Importa ressalvar que, apesar do sucesso na atualização do software, as não conformidades físicas e ambientais detectadas inicialmente como a acumulação de pó na unidade hidráulica e a instalação inadequada do soprador permaneceram presentes no local no momento da saída.",
+      consideracoes: "A atualização do sistema IC70C foi concluída com êxito, elevando o firmware para a versão 2.2.12 e assegurando a estabilidade operacional do equipamento. Os testes em carga demonstraram um desempenho satisfatório, com a câmara de britagem a operar com 60% de preenchimento e uma alimentação constante. A rastreabilidade do processo foi garantida através de backups de segurança realizados em todas as etapas críticas da intervenção.\n\nContudo, é fundamental ressalvar que o equipamento opera sob condições ambientais severas que podem comprometer a sua vida útil. A ausência de proteção na unidade hidráulica, o posicionamento inadequado do soprador e as irregularidades nas mangueiras de retorno de óleo representam riscos significativos de contaminação e desgaste prematuro de componentes internos. Recomenda-se fortemente que o cliente adote as medidas corretivas sugeridas como a instalação de uma cabine de proteção e a readequação do sistema de ar - para garantir que a eficiência do novo software seja acompanhada pela integridade mecânica do ativo a longo prazo."
+    };
+
+    function getEl(id) {
+      return document.getElementById(id);
+    }
+
+    function autoResize(textarea) {
+      if (!textarea) return;
+      textarea.style.height = 'auto';
+      textarea.style.height = (textarea.scrollHeight + 4) + 'px';
+    }
+
+    function adjustAllTextareas() {
+      document.querySelectorAll('textarea').forEach(ta => autoResize(ta));
+    }
+
+    function syncPrintContent() {
+      if (getEl('printObjetivo')) getEl('printObjetivo').textContent = getEl('inputObjetivo')?.value || '';
+      if (getEl('printCondicoesInicio')) getEl('printCondicoesInicio').textContent = getEl('inputCondicoesInicio')?.value || '';
+      if (getEl('printCondicoesSaida')) getEl('printCondicoesSaida').textContent = getEl('inputCondicoesSaida')?.value || '';
+      if (getEl('printConsideracoes')) getEl('printConsideracoes').textContent = getEl('inputConsideracoes')?.value || '';
+    }
+
+    function handlePrint() {
+      try {
+        syncPrintContent();
+        adjustAllTextareas();
+        setTimeout(() => {
+          window.print();
+        }, 150);
+      } catch (e) {
+        window.print();
+      }
+    }
+
+    window.onload = () => {
+      try {
+        if (!loadFormState()) {
+          loadTemplateData();
+        } else {
+          adjustAllTextareas();
+        }
+      } catch (err) {
+        loadTemplateData();
+      }
+
+      const inputs = document.querySelectorAll('input, textarea');
+      inputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+          if (e.target.tagName.toLowerCase() === 'textarea') {
+            autoResize(e.target);
+          }
+          saveFormState(false);
+        });
+        input.addEventListener('change', () => saveFormState(false));
+      });
+    };
+
+    window.onbeforeprint = () => {
+      syncPrintContent();
+      adjustAllTextareas();
+    };
+
+    function loadTemplateData() {
+      try {
+        getEl('inputWO').value = defaultData.wo;
+        getEl('inputData').value = defaultData.data;
+        getEl('inputObjetivo').value = defaultData.objetivo;
+        getEl('inputCondicoesInicio').value = defaultData.condicoesInicio;
+        getEl('inputCondicoesSaida').value = defaultData.condicoesSaida;
+        getEl('inputConsideracoes').value = defaultData.consideracoes;
+
+        adjustAllTextareas();
+        saveFormState(false);
+        showToast('Dados Metso carregados com sucesso!', 'info');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function clearForm() {
+      try {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="date"], textarea');
+        inputs.forEach(input => input.value = '');
+
+        adjustAllTextareas();
+        saveFormState(false);
+        showToast('Todos os campos foram limpos.', 'warning');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function collectFormData() {
+      return {
+        wo: getEl('inputWO')?.value || '',
+        data: getEl('inputData')?.value || '',
+        objetivo: getEl('inputObjetivo')?.value || '',
+        condicoesInicio: getEl('inputCondicoesInicio')?.value || '',
+        condicoesSaida: getEl('inputCondicoesSaida')?.value || '',
+        consideracoes: getEl('inputConsideracoes')?.value || ''
+      };
+    }
+
+    async function exportJSONState() {
+      try {
+        saveFormState(false);
+        const formData = collectFormData();
+        formData.exportedAt = new Date().toISOString();
+
+        const jsonStr = JSON.stringify(formData, null, 2);
+        const fileName = `Relatorio_Metso_${(formData.wo || 'WO').replace(/\s+/g, '_')}_${formData.data || 'data'}.json`;
+
+        if ('showSaveFilePicker' in window) {
+          try {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: fileName,
+              types: [{ description: 'Arquivo JSON', accept: { 'application/json': ['.json'] } }]
+            });
+            const writable = await handle.createWritable();
+            await writable.write(jsonStr);
+            await writable.close();
+            showToast(`Backup salvo: ${handle.name}`);
+            return;
+          } catch (err) {
+            if (err.name === 'AbortError') {
+              showToast('Salvamento cancelado.', 'info');
+              return;
+            }
+            console.warn('File System Access falhou, usando fallback:', err);
+          }
+        }
+
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        showToast('Relatório exportado em formato JSON!');
+      } catch (e) {
+        showToast('Erro ao exportar JSON.', 'error');
+      }
+    }
+
+    function importJSONState(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          applyFormData(data);
+          saveFormState(false);
+          showToast('Relatório carregado do arquivo JSON!');
+        } catch (err) {
+          showToast('Erro ao ler o arquivo JSON.', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function saveFormState(showNotification = true) {
+      try {
+        const formData = collectFormData();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        if (showNotification) showToast('Rascunho salvo no navegador!');
+      } catch (e) {}
+    }
+
+    function loadFormState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return false;
+
+      const formData = JSON.parse(saved);
+      applyFormData(formData);
+      return true;
+    }
+
+    function applyFormData(data) {
+      if (!data) return;
+      if (getEl('inputWO')) getEl('inputWO').value = data.wo || '';
+      if (getEl('inputData')) getEl('inputData').value = data.data || '';
+      if (getEl('inputObjetivo')) getEl('inputObjetivo').value = data.objetivo || '';
+      if (getEl('inputCondicoesInicio')) getEl('inputCondicoesInicio').value = data.condicoesInicio || '';
+      if (getEl('inputCondicoesSaida')) getEl('inputCondicoesSaida').value = data.condicoesSaida || '';
+      if (getEl('inputConsideracoes')) getEl('inputConsideracoes').value = data.consideracoes || '';
+
+      adjustAllTextareas();
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = getEl('toast');
+      const toastMessage = getEl('toastMessage');
+      const toastIcon = getEl('toastIcon');
+
+      if (!toast || !toastMessage || !toastIcon) return;
+
+      toastMessage.textContent = message;
+
+      if (type === 'error') {
+        toastIcon.className = 'fa-solid fa-circle-exclamation text-metso-500';
+      } else if (type === 'warning') {
+        toastIcon.className = 'fa-solid fa-triangle-exclamation text-white';
+      } else if (type === 'info') {
+        toastIcon.className = 'fa-solid fa-circle-info text-ink-400';
+      } else {
+        toastIcon.className = 'fa-solid fa-circle-check text-white';
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
