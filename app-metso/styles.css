@@ -1,0 +1,142 @@
+/* ═══════════════════════════════════════════════════════════
+   FONTES
+   ═══════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+* { font-family: 'Inter', system-ui, sans-serif; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+/* ═══════════════════════════════════════════════════════════
+   IMPRESSÃO
+   ═══════════════════════════════════════════════════════════ */
+@media print {
+  @page { size: A4; margin: 10mm 10mm 5mm 10mm; }
+  body { background: #fff !important; padding: 0 !important; margin: 0 !important; color: #000 !important; }
+  .no-print { display: none !important; }
+  .shadow-card, .shadow-cardHover, .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm, .shadow-2xl, .shadow-sidebar { box-shadow: none !important; }
+  textarea, input, select { border: none !important; background: transparent !important; appearance: none !important; }
+  
+  .print-only-text { display: block !important; white-space: pre-wrap !important; word-wrap: break-word !important; font-size: 12.5px !important; line-height: 1.55 !important; text-align: justify !important; }
+  textarea.descricao-textarea { display: none !important; }
+  .gallery-grid > div { break-inside: avoid !important; page-break-inside: avoid !important; }
+  .signature-canvas { display: none !important; }
+  .signature-img-print { display: block !important; max-height: 160px !important; }
+  
+  /* Mantém o card de assinatura inteiro na mesma página */
+  .signature-section-print { break-inside: avoid !important; page-break-inside: avoid !important; }
+  
+  #sidebar, #sidebarOverlay { display: none !important; }
+  .card-head { background: #14171c !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* ═══ NOVA REGRA: QUEBRA DE PÁGINA POR DIÁRIA ═══ */
+  /* Força o próximo dia a começar em uma nova página */
+  .dia-block { 
+    break-before: page !important; 
+    page-break-before: always !important; 
+    border: none !important; 
+    padding: 0 !important; 
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Remove a quebra do PRIMEIRO dia para não deixar a primeira página em branco */
+  .dia-panel:first-child .dia-block {
+    break-before: auto !important; 
+    page-break-before: auto !important;
+  }
+
+  /* Remove a quebra de página que estava forçando as evidências para a próxima folha, 
+     permitindo que o conteúdo flua naturalmente e economize papel */
+  .page-break-before {
+    break-before: auto !important;
+    page-break-before: auto !important;
+  }
+}
+
+.print-only-text { display: none; }
+.signature-img-print { display: none; }
+.print-footer { display: none; } /* Esconde na tela normal do navegador */
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════ */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #b9c0cb; border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #8f98a7; }
+
+/* ═══════════════════════════════════════════════════════════
+   PAINÉIS DE DIA
+   ═══════════════════════════════════════════════════════════ */
+.dia-panel { display: none; }
+.dia-panel.active { display: block; animation: fadeUp .25s ease-out; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════════════════════ */
+#sidebar {
+  position: fixed; top: 0; left: 0; height: 100vh; width: 360px;
+  background: #fff; z-index: 60; box-shadow: 4px 0 32px rgba(10,12,16,.18);
+  transform: translateX(-100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+  display: flex; flex-direction: column;
+}
+#sidebar.open { transform: translateX(0); }
+#sidebarOverlay {
+  position: fixed; inset: 0; background: rgba(10,12,16,.6);
+  z-index: 55; opacity: 0; pointer-events: none; transition: opacity .2s;
+  backdrop-filter: blur(2px);
+}
+#sidebarOverlay.open { opacity: 1; pointer-events: auto; }
+
+.dia-item { transition: all .15s ease; border-left: 3px solid transparent; }
+.dia-item:hover:not(.active) { background: #f6f7f9; border-left-color: #b9c0cb; }
+.dia-item.active { background: #f6f7f9; border-left-color: #c8102e; }
+
+/* ═══════════════════════════════════════════════════════════
+   INPUTS
+   ═══════════════════════════════════════════════════════════ */
+.field-input { transition: background .15s, border-color .15s; }
+.field-input:focus { background: #f6f7f9; outline: none; }
+input::placeholder, textarea::placeholder { color: #8f98a7; }
+
+/* ═══════════════════════════════════════════════════════════
+   ASSINATURA
+   ═══════════════════════════════════════════════════════════ */
+.signature-canvas {
+  background-image:
+    linear-gradient(#e4e7ec 1px, transparent 1px),
+    linear-gradient(90deg, #e4e7ec 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: -1px -1px;
+}
+.signature-wrap::after {
+  content: '';
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 44px;
+  border-bottom: 1px dashed #b9c0cb;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACESSIBILIDADE E BOTÕES
+   ═══════════════════════════════════════════════════════════ */
+:focus-visible { outline: 2px solid #14171c; outline-offset: 2px; border-radius: 4px; }
+.btn-tool { transition: all .15s ease; white-space: nowrap; }
+.btn-tool:hover { transform: translateY(-1px); }
+.btn-tool:active { transform: translateY(0); }
+
+.section-head { background: #14171c; letter-spacing: .08em; }
+
+.btn-metso { background: #14171c; color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; padding: 10px 18px; transition: background .15s ease; border: none; }
+.btn-metso:hover { background: #23272f; }
+.btn-metso-red { background: #c8102e; color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; padding: 10px 18px; transition: background .15s ease; border: none; }
+.btn-metso-red:hover { background: #a80d26; }
+.btn-metso-outline { background: transparent; color: #14171c; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: 11px; padding: 10px 18px; transition: all .15s ease; border: 1px solid #14171c; }
+.btn-metso-outline:hover { background: #14171c; color: #fff; }
+
+.metso-accent { position: relative; }
+.metso-accent::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #c8102e; }
+.metso-heading { font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; line-height: 1.1; }
